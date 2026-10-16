@@ -73,6 +73,11 @@
   .einstiege span { display:flex; flex-direction:column; font-size:13px;
     line-height:1.35; opacity:.9; }
   .einstiege b { font-size:17px; opacity:1; margin-bottom:1px; }
+  .zweispalten { display:grid; gap:30px; align-items:start;
+    grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); }
+  .zweispalten h2 { margin-top:0; }
+  .zweispalten .karten { grid-template-columns:1fr; }
+  .zweispalten .zeichengitter { grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); }
   /* Startseite */
   .buehne { background:linear-gradient(160deg,#32ADE6,#2563eb); color:#fff;
     padding:52px 20px 44px; text-align:center; }

@@ -221,6 +221,11 @@ const STIL = `
   .einstiege span { display:flex; flex-direction:column; font-size:13px;
     line-height:1.35; opacity:.9; }
   .einstiege b { font-size:17px; opacity:1; margin-bottom:1px; }
+  .zweispalten { display:grid; gap:30px; align-items:start;
+    grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); }
+  .zweispalten h2 { margin-top:0; }
+  .zweispalten .karten { grid-template-columns:1fr; }
+  .zweispalten .zeichengitter { grid-template-columns:repeat(auto-fill,minmax(104px,1fr)); }
   /* Startseite */
   .buehne { background:linear-gradient(160deg,#32ADE6,#2563eb); color:#fff;
     padding:52px 20px 44px; text-align:center; }
@@ -663,18 +668,53 @@ await writeFile(wurzel + "robots.txt",
 
 // ------------------------------------------------------- Startseite
 
-/** Wechselnde Beispiele. Die Auswahl haengt am Tag, nicht am Zufall je
- *  Aufruf — sonst entstuende bei jedem Lauf ein Commit, obwohl sich in
- *  Firestore nichts geaendert hat. */
-function beispiele(daten, wieViele) {
-  const tag = Math.floor(Date.now() / 86400000);
+/**
+ * Vorrat fuer die Beispiele auf der Startseite.
+ *
+ * Die eigentliche Auswahl trifft der Browser bei jedem Aufruf neu — fertige
+ * Dateien koennen das nicht. Damit die Datei nicht aufgeblaeht wird, liegt
+ * hier nur eine feste Auswahl bereit, aus der gezogen wird. Die Auswahl des
+ * Vorrats haengt am Inhalt, nicht an der Uhrzeit: Sonst bekaeme jeder Lauf
+ * eine andere Startseite und die taegliche Action wuerde jedes Mal
+ * einchecken, obwohl sich nichts geaendert hat.
+ */
+function vorrat(daten, wieViele) {
   const brauchbar = daten.filter((e) => e.bussgeld && Number(e.bussgeld) > 0);
   const gewaehlt = [];
   for (let i = 0; i < wieViele; i++) {
-    gewaehlt.push(brauchbar[(tag * 7919 + i * 104729) % brauchbar.length]);
+    gewaehlt.push(brauchbar[(i * 104729) % brauchbar.length]);
   }
   return gewaehlt;
 }
+
+/** Eine Beispielkarte. */
+function karte(e) {
+  return `<a class="karte" href="${PFAD}/${e.nummer}/">
+      <span class="nr">${e.nummer}</span>
+      <div class="text">${schuetze(e.text.length > 95 ? e.text.slice(0, 92) + "…" : e.text)}</div>
+      ${marken(e)}
+    </a>`;
+}
+
+/** Eine Zeichenkachel. */
+function zeichenKachel(z) {
+  return `<a class="zeichenkachel" href="${PFAD_VZ}/${encodeURIComponent(z.nummer)}/">
+      <img src="bilder/vz/${encodeURIComponent(z.nummer)}.png" alt="" loading="lazy">
+      <span class="nr">${schuetze(z.nummer)}</span>
+      <span class="bez">${schuetze(z.beschreibung.slice(0, 40))}</span>
+    </a>`;
+}
+
+/**
+ * Zeichen, die sich als Beispiel eignen: Es gibt ein Bild, und der Katalog
+ * fuehrt mindestens einen Tatbestand dazu. Ein Zeichen vorzuschlagen, hinter
+ * dem dann nichts steht, waere eine Sackgasse.
+ */
+const zeichenVorrat = zeichen.filter(
+  (z) => bilderDa.has(z.nummer)
+    && daten.some((e) => e.text.toLowerCase().includes(z.nummer.toLowerCase()))
+);
+console.log(`  ${zeichenVorrat.length} Zeichen taugen als Beispiel`);
 
 const startseite = `<!doctype html>
 <html lang="de">
@@ -716,35 +756,27 @@ const startseite = `<!doctype html>
 </div>
 
 <main>
-  <h2>Beispiele aus dem Katalog</h2>
-  <div class="karten">
-    ${beispiele(daten, 4).map((e) => `
-      <a class="karte" href="${PFAD}/${e.nummer}/">
-        <span class="nr">${e.nummer}</span>
-        <div class="text">${schuetze(e.text.length > 95 ? e.text.slice(0, 92) + "…" : e.text)}</div>
-        ${marken(e)}
-      </a>`).join("")}
-  </div>
-  <p style="margin-top:14px"><a class="marke stark" style="padding:9px 16px"
-     href="katalog/">Alle ${daten.length} Tatbestände durchsuchen →</a></p>
+  <!-- Zwei Spalten nebeneinander: Tatbestaende und Zeichen sind
+       gleichwertige Einstiege, nicht Haupt- und Nebensache. -->
+  <div class="zweispalten">
+    <section>
+      <h2>Beispiele aus dem Katalog</h2>
+      <div class="karten" id="beispiele">
+        ${vorrat(daten, 4).map(karte).join("")}
+      </div>
+      <p style="margin-top:12px"><a class="marke stark" style="padding:9px 16px"
+         href="katalog/">Alle ${daten.length} Tatbestände →</a></p>
+    </section>
 
-  <h2>Verkehrszeichen</h2>
-  <p style="margin-top:0">Zeichen nachschlagen und sehen, welche Tatbestände sich
-     darauf beziehen.</p>
-  <div class="zeichengitter">
-    ${["206", "274-50", "267", "283", "220-10", "240"]
-      .filter((n) => bilderDa.has(n))
-      .map((n) => {
-        const z = zeichen.find((x) => x.nummer === n);
-        return `<a class="zeichenkachel" href="${PFAD_VZ}/${encodeURIComponent(n)}/">
-            <img src="bilder/vz/${encodeURIComponent(n)}.png" alt="" loading="lazy">
-            <span class="nr">${n}</span>
-            <span class="bez">${schuetze((z?.beschreibung || "").slice(0, 38))}</span>
-          </a>`;
-      }).join("")}
+    <section>
+      <h2>Verkehrszeichen</h2>
+      <div class="zeichengitter" id="zeichenbeispiele">
+        ${zeichenVorrat.slice(0, 6).map(zeichenKachel).join("")}
+      </div>
+      <p style="margin-top:12px"><a class="marke stark" style="padding:9px 16px"
+         href="${PFAD_VZ}/">Alle ${zeichen.length} Zeichen →</a></p>
+    </section>
   </div>
-  <p style="margin-top:14px"><a class="marke stark" style="padding:9px 16px"
-     href="${PFAD_VZ}/">Alle ${zeichen.length} Verkehrszeichen →</a></p>
 
   <h2>Unterwegs in der App</h2>
   <div class="apps">
@@ -771,6 +803,28 @@ const startseite = `<!doctype html>
      Yacouba Pfälzner · <a href="mailto:developeryp1@gmail.com">developeryp1@gmail.com</a><br>
      Die vollständige Postadresse wird auf Anfrage per E-Mail mitgeteilt.</p>
 </footer>
+
+<script>
+// Bei jedem Aufruf andere Beispiele. Im HTML steht bereits eine Auswahl —
+// die sehen Suchmaschinen und alle ohne JavaScript; hier wird sie nur
+// ausgetauscht.
+(function () {
+  var tatbestaende = ${JSON.stringify(vorrat(daten, 60).map((e) => karte(e)))};
+  var zeichen = ${JSON.stringify(zeichenVorrat.map((z) => zeichenKachel(z)))};
+
+  function ziehe(aus, wieViele) {
+    var kopie = aus.slice(), raus = [];
+    while (raus.length < wieViele && kopie.length) {
+      raus.push(kopie.splice(Math.floor(Math.random() * kopie.length), 1)[0]);
+    }
+    return raus.join("");
+  }
+  var a = document.getElementById("beispiele");
+  var b = document.getElementById("zeichenbeispiele");
+  if (a) a.innerHTML = ziehe(tatbestaende, 4);
+  if (b) b.innerHTML = ziehe(zeichen, 6);
+})();
+</script>
 </body>
 </html>`;
 await writeFile(wurzel + "index.html", startseite);
