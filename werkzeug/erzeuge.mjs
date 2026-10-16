@@ -194,6 +194,10 @@ const STIL = `
   .feld span { font-size:13px; color:var(--gedaempft); display:block; margin-bottom:2px; }
   .hinweis { color:var(--gedaempft); font-size:14px; }
   .aktuell { background:var(--flaeche); border-left:3px solid var(--blau); padding-left:11px; }
+  /* Die Tatbestandsnummer ist das, wonach gesucht und was abgeschrieben
+     wird — sie steht deshalb groesser als der Sachverhalt darunter. */
+  .grossenummer { color:var(--blau); font-weight:800; font-size:34px;
+    font-variant-numeric:tabular-nums; letter-spacing:-.5px; margin:0 0 2px; }
   .zeichenbild { max-width:240px; width:100%; height:auto; }
   .zeichengitter { display:grid; gap:10px;
     grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); }
@@ -327,7 +331,7 @@ function tatbestandSeite(e, verwandte) {
     : "";
 
   const leiter = verwandte.length > 1
-    ? `<h2>Je nach Folge</h2>` + verwandte.map((v) => v.nummer === e.nummer
+    ? `<h2>Vorschläge</h2>` + verwandte.map((v) => v.nummer === e.nummer
         ? `<div class="treffer aktuell"><span class="nr">${schuetze(v.nummer)}</span>
              <div class="text">${schuetze(v.text)}</div>${marken(v, true)}</div>`
         : `<a class="treffer" href="../${schuetze(v.nummer)}/">
@@ -380,7 +384,7 @@ function tatbestandSeite(e, verwandte) {
         <input type="search" name="q" placeholder="Anderen Tatbestand suchen …">
         <button type="submit">Suchen</button>
       </form>
-      <p class="nr" style="font-size:19px">${schuetze(e.nummer)}</p>
+      <p class="grossenummer">${schuetze(e.nummer)}</p>
       <h1>${schuetze(e.text)}</h1>
       <div class="zahlen">
         ${zahl(e.bussgeld ? e.bussgeld + " €" : "–", "Bußgeld")}

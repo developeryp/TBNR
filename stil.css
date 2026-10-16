@@ -46,6 +46,10 @@
   .feld span { font-size:13px; color:var(--gedaempft); display:block; margin-bottom:2px; }
   .hinweis { color:var(--gedaempft); font-size:14px; }
   .aktuell { background:var(--flaeche); border-left:3px solid var(--blau); padding-left:11px; }
+  /* Die Tatbestandsnummer ist das, wonach gesucht und was abgeschrieben
+     wird — sie steht deshalb groesser als der Sachverhalt darunter. */
+  .grossenummer { color:var(--blau); font-weight:800; font-size:34px;
+    font-variant-numeric:tabular-nums; letter-spacing:-.5px; margin:0 0 2px; }
   .zeichenbild { max-width:240px; width:100%; height:auto; }
   .zeichengitter { display:grid; gap:10px;
     grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); }
