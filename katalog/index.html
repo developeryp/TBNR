@@ -6,10 +6,20 @@
 <title>Bußgeldkatalog durchsuchen – Tatbestandskatalog</title>
 <meta name="description" content="Alle Tatbestände des amtlichen Bußgeldkatalogs durchsuchen — mit Tatbestandsnummer, Bußgeld, Punkten und Fahrverbot.">
 <link rel="canonical" href="https://tbnr.app/katalog/">
+<link rel="icon" href="../bilder/icon-32.png" sizes="32x32">
+<link rel="icon" href="../bilder/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="../bilder/icon-180.png">
+<meta name="theme-color" content="#32ADE6">
 <link rel="stylesheet" href="../stil.css">
 </head>
 <body>
-<header><a href="../katalog/">Tatbestandskatalog</a></header>
+<header>
+  <a class="marke-wort" href="../">Tatbestandskatalog</a>
+  <nav>
+    <a href="../katalog/">Tatbestände</a>
+    <a href="../verkehrszeichen/">Verkehrszeichen</a>
+  </nav>
+</header>
 <main>
       <form id="suche">
         <input type="search" id="q" name="q" placeholder="Tatbestand oder Nummer suchen …" autofocus>
@@ -35,7 +45,7 @@
 </footer>
 <script>
 (function () {
-  var daten = [], synonyme = {"halteverbot":"Haltverbot","handy":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","smartphone":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","Zebrastreifen":"Fußgängerüberweg","einfädeln":"sie wechselten den Fahrstreifen","scooter":"Elektrokleinstfahrzeug","e-scooter":"Elektrokleinstfahrzeug","thc":"Tetrahydrocannabinol","rote Ampel":"Rotlicht der Lichtzeichenanlage","stop":"Zeichen 206","motorrad":"Kraftrad","Behindertenparkplatz":"Sonderparkplatz","tüv":"Hauptuntersuchung","ausparken":"Parklücke","laptop":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","einparken":"Parklücke","telefon":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","Anschnaller":"Sicherheitsgurt","ampel":"Lichtzeichenanlage","innerorts":"innerhalb geschlossener Ortschaften","Blitzer":"Verkehrsüberwachungsmaßnahmen","Standstreifen":"Seitenstreifen","blinker":"Fahrtrichtungsanzeiger","angeschnallt":"Sicherheitsgurt"}, PFADJS = "tatbestand";
+  var daten = [], synonyme = {"einfädeln":"sie wechselten den Fahrstreifen","tüv":"Hauptuntersuchung","motorrad":"Kraftrad","stop":"Zeichen 206","smartphone":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","Blitzer":"Verkehrsüberwachungsmaßnahmen","blinker":"Fahrtrichtungsanzeiger","scooter":"Elektrokleinstfahrzeug","ampel":"Lichtzeichenanlage","angeschnallt":"Sicherheitsgurt","telefon":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","rote Ampel":"Rotlicht der Lichtzeichenanlage","Zebrastreifen":"Fußgängerüberweg","ausparken":"Parklücke","Standstreifen":"Seitenstreifen","einparken":"Parklücke","laptop":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","e-scooter":"Elektrokleinstfahrzeug","Anschnaller":"Sicherheitsgurt","Behindertenparkplatz":"Sonderparkplatz","halteverbot":"Haltverbot","thc":"Tetrahydrocannabinol","handy":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","innerorts":"innerhalb geschlossener Ortschaften"}, PFADJS = "tatbestand";
   var feld = document.getElementById("q"), liste = document.getElementById("liste");
   var bereich = "";
 

@@ -9,8 +9,14 @@
   body { margin:0; background:var(--grund); color:var(--schrift);
     font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-text-size-adjust:100%; }
-  header { background:var(--blau); padding:14px 20px; }
-  header a { color:#fff; text-decoration:none; font-weight:700; font-size:19px; }
+  header { background:var(--blau); padding:12px 18px; display:flex;
+    align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  header a { color:#fff; text-decoration:none; }
+  .marke-wort { font-weight:700; font-size:19px; }
+  header nav { display:flex; gap:8px; }
+  header nav a { font-size:14px; font-weight:600; padding:6px 12px;
+    border-radius:20px; background:rgba(255,255,255,.18); white-space:nowrap; }
+  header nav a:hover { background:rgba(255,255,255,.3); }
   main { max-width:760px; margin:0 auto; padding:20px 16px 60px; }
   form { display:flex; gap:8px; margin:0 0 14px; }
   input[type=search] { flex:1; min-width:0; padding:12px 15px; font:inherit;
@@ -49,6 +55,11 @@
   .zeichenkachel:hover { outline:2px solid var(--blau); }
   .zeichenkachel img { width:62px; height:62px; object-fit:contain; }
   .zeichenkachel .bez { font-size:12px; color:var(--gedaempft); line-height:1.3; }
+  .einstiege { display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+    margin-top:16px; }
+  .einstiege a { background:rgba(255,255,255,.2); color:#fff; text-decoration:none;
+    padding:9px 18px; border-radius:22px; font-weight:600; font-size:15px; }
+  .einstiege a:hover { background:rgba(255,255,255,.32); }
   /* Startseite */
   .buehne { background:linear-gradient(160deg,#32ADE6,#2563eb); color:#fff;
     padding:52px 20px 44px; text-align:center; }

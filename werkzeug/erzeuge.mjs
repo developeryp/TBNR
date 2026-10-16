@@ -155,8 +155,14 @@ const STIL = `
   body { margin:0; background:var(--grund); color:var(--schrift);
     font:16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-text-size-adjust:100%; }
-  header { background:var(--blau); padding:14px 20px; }
-  header a { color:#fff; text-decoration:none; font-weight:700; font-size:19px; }
+  header { background:var(--blau); padding:12px 18px; display:flex;
+    align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  header a { color:#fff; text-decoration:none; }
+  .marke-wort { font-weight:700; font-size:19px; }
+  header nav { display:flex; gap:8px; }
+  header nav a { font-size:14px; font-weight:600; padding:6px 12px;
+    border-radius:20px; background:rgba(255,255,255,.18); white-space:nowrap; }
+  header nav a:hover { background:rgba(255,255,255,.3); }
   main { max-width:760px; margin:0 auto; padding:20px 16px 60px; }
   form { display:flex; gap:8px; margin:0 0 14px; }
   input[type=search] { flex:1; min-width:0; padding:12px 15px; font:inherit;
@@ -195,6 +201,11 @@ const STIL = `
   .zeichenkachel:hover { outline:2px solid var(--blau); }
   .zeichenkachel img { width:62px; height:62px; object-fit:contain; }
   .zeichenkachel .bez { font-size:12px; color:var(--gedaempft); line-height:1.3; }
+  .einstiege { display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+    margin-top:16px; }
+  .einstiege a { background:rgba(255,255,255,.2); color:#fff; text-decoration:none;
+    padding:9px 18px; border-radius:22px; font-weight:600; font-size:15px; }
+  .einstiege a:hover { background:rgba(255,255,255,.32); }
   /* Startseite */
   .buehne { background:linear-gradient(160deg,#32ADE6,#2563eb); color:#fff;
     padding:52px 20px 44px; text-align:center; }
@@ -228,10 +239,20 @@ function geruest({ titel, beschreibung, inhalt, pfad, hoch, skript = "", banner 
 <title>${schuetze(titel)}</title>
 <meta name="description" content="${schuetze(beschreibung)}">
 <link rel="canonical" href="${BASIS}${pfad}">
+<link rel="icon" href="${hoch}bilder/icon-32.png" sizes="32x32">
+<link rel="icon" href="${hoch}bilder/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="${hoch}bilder/icon-180.png">
+<meta name="theme-color" content="${BLAU}">
 <link rel="stylesheet" href="${hoch}stil.css">${banner}
 </head>
 <body>
-<header><a href="${hoch}katalog/">Tatbestandskatalog</a></header>
+<header>
+  <a class="marke-wort" href="${hoch}">Tatbestandskatalog</a>
+  <nav>
+    <a href="${hoch}katalog/">Tatbestände</a>
+    <a href="${hoch}${PFAD_VZ}/">Verkehrszeichen</a>
+  </nav>
+</header>
 <main>${inhalt}</main>
 <footer>
   <p>Alle Angaben ohne Gewähr. Maßgeblich ist der amtliche Bußgeldkatalog.</p>
@@ -641,6 +662,10 @@ const startseite = `<!doctype html>
 <meta name="description" content="Alle ${daten.length} Tatbestände des amtlichen Bußgeldkatalogs: Tatbestandsnummer, Bußgeld, Punkte und Fahrverbot. Durchsuchbar, kostenlos, auch als App.">
 <link rel="canonical" href="${BASIS}/">
 <meta name="apple-itunes-app" content="app-id=${APPLE_ID}">
+<link rel="icon" href="bilder/icon-32.png" sizes="32x32">
+<link rel="icon" href="bilder/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="bilder/icon-180.png">
+<meta name="theme-color" content="${BLAU}">
 <link rel="stylesheet" href="stil.css">
 </head>
 <body>
@@ -653,6 +678,12 @@ const startseite = `<!doctype html>
     <input type="search" name="q" placeholder="Tatbestand oder Nummer suchen …">
     <button type="submit">Suchen</button>
   </form>
+  <!-- Die Zeichensuche steht gleichberechtigt neben der Tatbestandssuche,
+       nicht erst weiter unten — sie ist der zweite Grund herzukommen. -->
+  <p class="einstiege">
+    <a href="katalog/">${daten.length} Tatbestände</a>
+    <a href="${PFAD_VZ}/">${zeichen.length} Verkehrszeichen</a>
+  </p>
 </div>
 
 <main>
