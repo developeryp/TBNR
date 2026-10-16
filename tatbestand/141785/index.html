@@ -7,6 +7,7 @@
 <meta name="description" content="Tatbestandsnummer 141785: Sie parkten &lt;auf dem Gehweg/auf dem gemeinsamen Geh- und Radweg/ auf dem Gehweg eines g… 70 Euro.">
 <link rel="canonical" href="https://tbnr.app/tatbestand/141785/">
 <link rel="stylesheet" href="../../stil.css">
+<meta name="apple-itunes-app" content="app-id=6473509923, app-argument=tbnr://141785">
 </head>
 <body>
 <header><a href="../../katalog/">Tatbestandskatalog</a></header>
@@ -26,8 +27,15 @@
       
       
       <p style="margin:18px 0 0">
-      <a href="tbnr://141785" class="appknopf">In der App öffnen</a>
+      <a href="tbnr://141785" class="appknopf" id="appknopf">In der App öffnen</a>
     </p>
+    <script>
+      // Nur Android braucht eine andere Adresse. Auf dem Rechner bleibt der
+      // Knopf stehen und tut nichts — das ist dort auch die richtige Antwort.
+      if (/Android/i.test(navigator.userAgent)) {
+        document.getElementById("appknopf").href = "intent://141785#Intent;scheme=tbnr;package=com.yp.tatbestandskatalog;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.yp.tatbestandskatalog;end";
+      }
+    </script>
       <h2>Je nach Folge</h2><a class="treffer" href="../141184/">
              <span class="nr">141184</span>
              <div class="text">Sie parkten &lt;auf dem Gehweg/auf dem gemeinsamen Geh- und Radweg/ auf dem Gehweg eines getrennten Rad- und Gehwegs/im Bereich einer Fußgängerzone&gt;, der durch Zeichen &lt;239/240/241/242.1&gt; gesperrt war.</div><div class="marken"><span class="marke">55 €</span></div></a><div class="treffer aktuell"><span class="nr">141785</span>

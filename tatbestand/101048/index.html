@@ -7,6 +7,7 @@
 <meta name="description" content="Tatbestandsnummer 101048: Sie behinderten +) durch das Parken auf einer Fußgängerfurt der Lichtzeichenanlage Andere. 20 Euro.">
 <link rel="canonical" href="https://tbnr.app/tatbestand/101048/">
 <link rel="stylesheet" href="../../stil.css">
+<meta name="apple-itunes-app" content="app-id=6473509923, app-argument=tbnr://101048">
 </head>
 <body>
 <header><a href="../../katalog/">Tatbestandskatalog</a></header>
@@ -26,8 +27,15 @@
       
       
       <p style="margin:18px 0 0">
-      <a href="tbnr://101048" class="appknopf">In der App öffnen</a>
+      <a href="tbnr://101048" class="appknopf" id="appknopf">In der App öffnen</a>
     </p>
+    <script>
+      // Nur Android braucht eine andere Adresse. Auf dem Rechner bleibt der
+      // Knopf stehen und tut nichts — das ist dort auch die richtige Antwort.
+      if (/Android/i.test(navigator.userAgent)) {
+        document.getElementById("appknopf").href = "intent://101048#Intent;scheme=tbnr;package=com.yp.tatbestandskatalog;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.yp.tatbestandskatalog;end";
+      }
+    </script>
       </main>
 <footer>
   <p>Alle Angaben ohne Gewähr. Maßgeblich ist der amtliche Bußgeldkatalog.</p>

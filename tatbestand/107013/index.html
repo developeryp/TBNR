@@ -7,6 +7,7 @@
 <meta name="description" content="Tatbestandsnummer 107013: Sie fuhren auf dem Ausfädelungsstreifen schneller als der Verkehr auf den durchgehenden… 30 Euro.">
 <link rel="canonical" href="https://tbnr.app/tatbestand/107013/">
 <link rel="stylesheet" href="../../stil.css">
+<meta name="apple-itunes-app" content="app-id=6473509923, app-argument=tbnr://107013">
 </head>
 <body>
 <header><a href="../../katalog/">Tatbestandskatalog</a></header>
@@ -26,8 +27,15 @@
       
       
       <p style="margin:18px 0 0">
-      <a href="tbnr://107013" class="appknopf">In der App öffnen</a>
+      <a href="tbnr://107013" class="appknopf" id="appknopf">In der App öffnen</a>
     </p>
+    <script>
+      // Nur Android braucht eine andere Adresse. Auf dem Rechner bleibt der
+      // Knopf stehen und tut nichts — das ist dort auch die richtige Antwort.
+      if (/Android/i.test(navigator.userAgent)) {
+        document.getElementById("appknopf").href = "intent://107013#Intent;scheme=tbnr;package=com.yp.tatbestandskatalog;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.yp.tatbestandskatalog;end";
+      }
+    </script>
       <h2>Je nach Folge</h2><a class="treffer" href="../107012/">
              <span class="nr">107012</span>
              <div class="text">Sie fuhren auf dem Ausfädelungsstreifen schneller als der Verkehr auf den durchgehenden Fahrstreifen.</div><div class="marken"><span class="marke">25 €</span></div></a><div class="treffer aktuell"><span class="nr">107013</span>

@@ -7,6 +7,7 @@
 <meta name="description" content="Tatbestandsnummer 120796: Sie überschritten die zulässige Schrittgeschwindigkeit innerhalb geschlossener Ortschaf… 950 Euro, 2 Punkte.">
 <link rel="canonical" href="https://tbnr.app/tatbestand/120796/">
 <link rel="stylesheet" href="../../stil.css">
+<meta name="apple-itunes-app" content="app-id=6473509923, app-argument=tbnr://120796">
 </head>
 <body>
 <header><a href="../../katalog/">Tatbestandskatalog</a></header>
@@ -28,8 +29,15 @@
          führt zur Verlängerung der Probezeit auf vier Jahre und zur Anordnung eines
          Aufbauseminars.</div>
       <p style="margin:18px 0 0">
-      <a href="tbnr://120796" class="appknopf">In der App öffnen</a>
+      <a href="tbnr://120796" class="appknopf" id="appknopf">In der App öffnen</a>
     </p>
+    <script>
+      // Nur Android braucht eine andere Adresse. Auf dem Rechner bleibt der
+      // Knopf stehen und tut nichts — das ist dort auch die richtige Antwort.
+      if (/Android/i.test(navigator.userAgent)) {
+        document.getElementById("appknopf").href = "intent://120796#Intent;scheme=tbnr;package=com.yp.tatbestandskatalog;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.yp.tatbestandskatalog;end";
+      }
+    </script>
       <h2>Je nach Folge</h2><a class="treffer" href="../120774/">
              <span class="nr">120774</span>
              <div class="text">Sie überschritten die zulässige Schrittgeschwindigkeit innerhalb geschlossener Ortschaften um (61 - ∞) km/h bei an einer Haltestelle haltendem &lt;Linienbus/gekennzeichneten Schulbus&gt; mit eingeschaltetem Warnblinklicht. Zulässige Geschwindigkeit: ... km/h. Festgestellte Geschwindigkeit (nach Toleranzabzug): ... km/h.</div><div class="marken"><span class="marke">800 €</span><span class="marke">2 Punkte</span><span class="marke">Fahrverbot 3 Monat(e)</span><span class="marke a">A-Verstoß</span><span class="marke">(Lkw usw.)</span></div></a><div class="treffer aktuell"><span class="nr">120796</span>

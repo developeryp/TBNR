@@ -37,6 +37,12 @@ const BLAU = "#32ADE6";
  *  der Adresse mitliest — "/tatbestand/112665/" schlaegt "/t/112665/". */
 const PFAD = "tatbestand";
 
+/** Kennungen der beiden Apps — fuer Deeplinks und Banner. */
+const APPLE_ID = "6473509923";
+const ANDROID_PAKET = "com.yp.tatbestandskatalog";
+const APPLE_LINK = `https://apps.apple.com/de/app/tatbestandskatalog/id${APPLE_ID}`;
+const PLAY_LINK = `https://play.google.com/store/apps/details?id=${ANDROID_PAKET}`;
+
 /** Rechtsgrundlage aus der ersten Ziffer — wie FilterKategorie.vonTbnr. */
 const BEREICHE = [
   { kennung: "stvo", titel: "StVO", ziffer: "1" },
@@ -138,6 +144,26 @@ const STIL = `
   .feld span { font-size:13px; color:var(--gedaempft); display:block; margin-bottom:2px; }
   .hinweis { color:var(--gedaempft); font-size:14px; }
   .aktuell { background:var(--flaeche); border-left:3px solid var(--blau); padding-left:11px; }
+  /* Startseite */
+  .buehne { background:linear-gradient(160deg,#32ADE6,#2563eb); color:#fff;
+    padding:52px 20px 44px; text-align:center; }
+  /* Mitwachsend, damit der lange Name auch auf schmalen Geraeten passt. */
+  .buehne h1 { font-size:clamp(27px,8vw,42px); margin:0 0 10px; letter-spacing:-.5px;
+    overflow-wrap:anywhere; }
+  .buehne p { margin:0 auto; max-width:460px; opacity:.92; font-size:17px; }
+  .buehne form { max-width:460px; margin:26px auto 0; }
+  .buehne input { background:#fff; color:#11181c; border:0; }
+  .buehne button { background:#11181c; }
+  .zeichen { display:flex; justify-content:center; gap:14px; flex-wrap:wrap;
+    padding:22px 16px 0; }
+  .zeichen img { width:52px; height:52px; object-fit:contain; opacity:.9; }
+  .karten { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
+  .karte { display:block; background:var(--flaeche); border-radius:14px;
+    padding:14px 16px; text-decoration:none; color:inherit; }
+  .karte:hover { outline:2px solid var(--blau); }
+  .apps { display:flex; gap:18px; align-items:center; flex-wrap:wrap;
+    background:var(--flaeche); border-radius:16px; padding:20px; margin-top:14px; }
+  .apps img { width:76px; height:76px; border-radius:17px; }
   .appknopf { display:inline-block; padding:11px 18px; border-radius:10px;
     background:var(--blau); color:#fff; text-decoration:none; font-weight:600; }
   footer { max-width:760px; margin:0 auto; padding:0 16px 40px;
@@ -145,7 +171,7 @@ const STIL = `
   footer a { color:var(--blau); }
 `;
 
-function geruest({ titel, beschreibung, inhalt, pfad, hoch, skript = "" }) {
+function geruest({ titel, beschreibung, inhalt, pfad, hoch, skript = "", banner = "" }) {
   return `<!doctype html>
 <html lang="de">
 <head>
@@ -154,7 +180,7 @@ function geruest({ titel, beschreibung, inhalt, pfad, hoch, skript = "" }) {
 <title>${schuetze(titel)}</title>
 <meta name="description" content="${schuetze(beschreibung)}">
 <link rel="canonical" href="${BASIS}${pfad}">
-<link rel="stylesheet" href="${hoch}stil.css">
+<link rel="stylesheet" href="${hoch}stil.css">${banner}
 </head>
 <body>
 <header><a href="${hoch}katalog/">Tatbestandskatalog</a></header>
@@ -223,9 +249,23 @@ function tatbestandSeite(e, verwandte) {
   // unter iOS, intent.data.host unter Android) — "tbnr://112665" oeffnet den
   // Tatbestand also direkt. Ist die App nicht da, passiert nichts; darum
   // stehen die Store-Verweise weiterhin in der Fusszeile.
+  // iOS loest das ueber das Smart App Banner oben im Safari — installiert
+  // heisst "Öffnen", sonst "Anzeigen". Android kennt so etwas nicht, dort
+  // tut es eine intent-Adresse: Ist die App da, geht sie auf, sonst
+  // uebernimmt browser_fallback_url und schickt in den Play Store.
+  const androidLink = `intent://${e.nummer}#Intent;scheme=tbnr;package=${ANDROID_PAKET};`
+    + `S.browser_fallback_url=${encodeURIComponent(PLAY_LINK)};end`;
+
   const appKnopf = `<p style="margin:18px 0 0">
-      <a href="tbnr://${e.nummer}" class="appknopf">In der App öffnen</a>
-    </p>`;
+      <a href="tbnr://${e.nummer}" class="appknopf" id="appknopf">In der App öffnen</a>
+    </p>
+    <script>
+      // Nur Android braucht eine andere Adresse. Auf dem Rechner bleibt der
+      // Knopf stehen und tut nichts — das ist dort auch die richtige Antwort.
+      if (/Android/i.test(navigator.userAgent)) {
+        document.getElementById("appknopf").href = ${JSON.stringify(androidLink)};
+      }
+    </script>`;
 
   const kurz = e.text.length > 90 ? e.text.slice(0, 87) + "…" : e.text;
   const zahlen = [
@@ -244,6 +284,7 @@ function tatbestandSeite(e, verwandte) {
           ? ", " + e.punkte + (e.punkte === "1" ? " Punkt" : " Punkte") : ""}.`,
     pfad: `/${PFAD}/${e.nummer}/`,
     hoch,
+    banner: `\n<meta name="apple-itunes-app" content="app-id=${APPLE_ID}, app-argument=tbnr://${e.nummer}">`,
     inhalt: `
       <form action="${hoch}katalog/" method="get">
         <input type="search" name="q" placeholder="Anderen Tatbestand suchen …">
@@ -411,5 +452,91 @@ await writeFile(wurzel + "sitemap.xml",
 // noindex — dafuer muessen sie aber lesbar sein, deshalb kein Disallow.
 await writeFile(wurzel + "robots.txt",
   `User-agent: *\nAllow: /\nSitemap: ${BASIS}/sitemap.xml\n`);
+
+// ------------------------------------------------------- Startseite
+
+/** Wechselnde Beispiele. Die Auswahl haengt am Tag, nicht am Zufall je
+ *  Aufruf — sonst entstuende bei jedem Lauf ein Commit, obwohl sich in
+ *  Firestore nichts geaendert hat. */
+function beispiele(daten, wieViele) {
+  const tag = Math.floor(Date.now() / 86400000);
+  const brauchbar = daten.filter((e) => e.bussgeld && Number(e.bussgeld) > 0);
+  const gewaehlt = [];
+  for (let i = 0; i < wieViele; i++) {
+    gewaehlt.push(brauchbar[(tag * 7919 + i * 104729) % brauchbar.length]);
+  }
+  return gewaehlt;
+}
+
+const zeichen = ["206", "274-50", "267", "283", "220-10", "240", "286", "123"];
+
+const startseite = `<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tatbestandskatalog – alle Tatbestandsnummern mit Bußgeld und Punkten</title>
+<meta name="description" content="Alle ${daten.length} Tatbestände des amtlichen Bußgeldkatalogs: Tatbestandsnummer, Bußgeld, Punkte und Fahrverbot. Durchsuchbar, kostenlos, auch als App.">
+<link rel="canonical" href="${BASIS}/">
+<meta name="apple-itunes-app" content="app-id=${APPLE_ID}">
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+
+<div class="buehne">
+  <h1>Tatbestandskatalog</h1>
+  <p>Alle ${daten.length} Tatbestände des amtlichen Bußgeldkatalogs —
+     mit Nummer, Bußgeld, Punkten und Fahrverbot.</p>
+  <form action="katalog/" method="get">
+    <input type="search" name="q" placeholder="Tatbestand oder Nummer suchen …">
+    <button type="submit">Suchen</button>
+  </form>
+</div>
+
+<div class="zeichen">
+  ${zeichen.map((z) => `<img src="bilder/vz-${z}.png" alt="" loading="lazy">`).join("")}
+</div>
+
+<main>
+  <h2>Beispiele aus dem Katalog</h2>
+  <div class="karten">
+    ${beispiele(daten, 4).map((e) => `
+      <a class="karte" href="${PFAD}/${e.nummer}/">
+        <span class="nr">${e.nummer}</span>
+        <div class="text">${schuetze(e.text.length > 95 ? e.text.slice(0, 92) + "…" : e.text)}</div>
+        ${marken(e)}
+      </a>`).join("")}
+  </div>
+  <p style="margin-top:14px"><a class="marke stark" style="padding:9px 16px"
+     href="katalog/">Alle ${daten.length} Tatbestände durchsuchen →</a></p>
+
+  <h2>Unterwegs in der App</h2>
+  <div class="apps">
+    <img src="bilder/app.png" alt="App-Symbol Tatbestandskatalog">
+    <img src="bilder/app2.png" alt="Alternatives App-Symbol">
+    <div style="flex:1 1 200px">
+      <p style="margin:0 0 10px">Offline nachschlagen, Tatbestände merken, eigene
+         Notizen anlegen und Verkehrszeichen nachsehen.</p>
+      <p style="margin:0">
+        <a class="appknopf" href="${APPLE_LINK}">iPhone</a>
+        <a class="appknopf" href="${PLAY_LINK}">Android</a>
+      </p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>Alle Angaben ohne Gewähr. Maßgeblich ist der amtliche Bußgeldkatalog.</p>
+  <p>
+    <a href="Datenschutzerkl%C3%A4rung.html">Datenschutzerklärung</a> ·
+    <a href="Nutzungsbedingungen.html">Nutzungsbedingungen</a>
+  </p>
+  <p><strong>Impressum</strong> — Angaben gemäß § 5 TMG<br>
+     Yacouba Pfälzner · <a href="mailto:developeryp1@gmail.com">developeryp1@gmail.com</a><br>
+     Die vollständige Postadresse wird auf Anfrage per E-Mail mitgeteilt.</p>
+</footer>
+</body>
+</html>`;
+await writeFile(wurzel + "index.html", startseite);
 
 console.log("Fertig.");

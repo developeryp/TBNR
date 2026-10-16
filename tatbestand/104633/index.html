@@ -7,6 +7,7 @@
 <meta name="description" content="Tatbestandsnummer 104633: Sie hielten mit einem &lt;kennzpfl. Kfz. m. gef. Gütern/KOM m. Fahrg.&gt; bei einer Geschwind… 480 Euro, 2 Punkte.">
 <link rel="canonical" href="https://tbnr.app/tatbestand/104633/">
 <link rel="stylesheet" href="../../stil.css">
+<meta name="apple-itunes-app" content="app-id=6473509923, app-argument=tbnr://104633">
 </head>
 <body>
 <header><a href="../../katalog/">Tatbestandskatalog</a></header>
@@ -28,8 +29,15 @@
          führt zur Verlängerung der Probezeit auf vier Jahre und zur Anordnung eines
          Aufbauseminars.</div>
       <p style="margin:18px 0 0">
-      <a href="tbnr://104633" class="appknopf">In der App öffnen</a>
+      <a href="tbnr://104633" class="appknopf" id="appknopf">In der App öffnen</a>
     </p>
+    <script>
+      // Nur Android braucht eine andere Adresse. Auf dem Rechner bleibt der
+      // Knopf stehen und tut nichts — das ist dort auch die richtige Antwort.
+      if (/Android/i.test(navigator.userAgent)) {
+        document.getElementById("appknopf").href = "intent://104633#Intent;scheme=tbnr;package=com.yp.tatbestandskatalog;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.yp.tatbestandskatalog;end";
+      }
+    </script>
       <h2>Je nach Folge</h2><a class="treffer" href="../104621/">
              <span class="nr">104621</span>
              <div class="text">Sie hielten mit einem &lt;kennzpfl. Kfz. m. gef. Gütern/KOM m. Fahrg.&gt; bei einer Geschwindigkeit von ... km/h den erforderlichen Abstand von ... m zum vorausfahrenden Fahrzeug nicht ein. Ihr Abstand betrug G m und damit weniger als 2/10 des halben Tachowertes. Toleranzen sind zu Ihren Gunsten berücksichtigt.</div><div class="marken"><span class="marke">360 €</span><span class="marke">1 Punkt</span><span class="marke a">A-Verstoß</span><span class="marke">(Kfz m. gef. Gütern oder KOM m. Fahrgästen)</span></div></a><a class="treffer" href="../104627/">

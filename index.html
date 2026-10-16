@@ -1,69 +1,82 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rechtliche Informationen – Tatbestandskatalog</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 1rem;
-      line-height: 1.6;
-    }
-    h1 {
-      text-align: center;
-      font-size: 1.8rem;
-    }
-    h2 {
-      margin-top: 2rem;
-      font-size: 1.4rem;
-    }
-    a {
-      color: #007acc;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .katalog { text-align: center; margin: 2rem 0 0.3rem; }
-    .katalog a {
-      display: inline-block;
-      padding: 14px 26px;
-      border-radius: 10px;
-      background: #32ADE6;
-      color: #fff;
-      font-size: 1.1rem;
-    }
-    .unter { text-align: center; color: #666; margin-top: 0; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tatbestandskatalog – alle Tatbestandsnummern mit Bußgeld und Punkten</title>
+<meta name="description" content="Alle 2702 Tatbestände des amtlichen Bußgeldkatalogs: Tatbestandsnummer, Bußgeld, Punkte und Fahrverbot. Durchsuchbar, kostenlos, auch als App.">
+<link rel="canonical" href="https://tbnr.app/">
+<meta name="apple-itunes-app" content="app-id=6473509923">
+<link rel="stylesheet" href="stil.css">
 </head>
 <body>
+
+<div class="buehne">
   <h1>Tatbestandskatalog</h1>
+  <p>Alle 2702 Tatbestände des amtlichen Bußgeldkatalogs —
+     mit Nummer, Bußgeld, Punkten und Fahrverbot.</p>
+  <form action="katalog/" method="get">
+    <input type="search" name="q" placeholder="Tatbestand oder Nummer suchen …">
+    <button type="submit">Suchen</button>
+  </form>
+</div>
 
-  <!-- Wer tbnr.app direkt eintippt, soll zuerst den Katalog sehen und nicht
-       das Impressum. Die rechtlichen Seiten bleiben darunter, weil die
-       App-Stores auf diese Adresse verweisen. -->
-  <p class="katalog">
-    <a href="katalog/">Bußgeldkatalog durchsuchen →</a>
-  </p>
-  <p class="unter">Alle Tatbestände mit Nummer, Bußgeld, Punkten und Fahrverbot.</p>
+<div class="zeichen">
+  <img src="bilder/vz-206.png" alt="" loading="lazy"><img src="bilder/vz-274-50.png" alt="" loading="lazy"><img src="bilder/vz-267.png" alt="" loading="lazy"><img src="bilder/vz-283.png" alt="" loading="lazy"><img src="bilder/vz-220-10.png" alt="" loading="lazy"><img src="bilder/vz-240.png" alt="" loading="lazy"><img src="bilder/vz-286.png" alt="" loading="lazy"><img src="bilder/vz-123.png" alt="" loading="lazy">
+</div>
 
-  <h1 style="font-size:1.3rem;margin-top:3rem">Rechtliche Informationen / Legal Information</h1>
+<main>
+  <h2>Beispiele aus dem Katalog</h2>
+  <div class="karten">
+    
+      <a class="karte" href="tatbestand/120640/">
+        <span class="nr">120640</span>
+        <div class="text">Sie überschritten die zulässige Schrittgeschwindigkeit innerhalb geschlossener Ortschaften u…</div>
+        <div class="marken"><span class="marke">70 €</span><span class="marke">(gef. Güter usw.)</span></div>
+      </a>
+      <a class="karte" href="tatbestand/112282/">
+        <span class="nr">112282</span>
+        <div class="text">Sie parkten verbotswidrig und verhinderten dadurch die Benutzung gekennzeichneter Parkflächen.</div>
+        <div class="marken"><span class="marke">10 €</span></div>
+      </a>
+      <a class="karte" href="tatbestand/103730/">
+        <span class="nr">103730</span>
+        <div class="text">Sie überschritten die zulässige Höchstgeschwindigkeit außerhalb geschlossener Ortschaften um…</div>
+        <div class="marken"><span class="marke">175 €</span><span class="marke">1 Punkt</span><span class="marke a">A-Verstoß</span><span class="marke">(Lkw usw.)</span></div>
+      </a>
+      <a class="karte" href="tatbestand/424614/">
+        <span class="nr">424614</span>
+        <div class="text">Sie führten das Kraftfahrzeug mit einer Alkoholmenge im Körper, die zu einer Atemalkoholkonz…</div>
+        <div class="marken"><span class="marke">1500 €</span><span class="marke">2 Punkte</span><span class="marke">Fahrverbot 3 Monat(e)</span><span class="marke a">A-Verstoß</span></div>
+      </a>
+  </div>
+  <p style="margin-top:14px"><a class="marke stark" style="padding:9px 16px"
+     href="katalog/">Alle 2702 Tatbestände durchsuchen →</a></p>
 
-  <h2><a href="Datenschutzerklärung.html">📄 Datenschutzerklärung / Privacy Policy</a></h2>
-  <h2><a href="Nutzungsbedingungen.html">📜 Nutzungsbedingungen / Terms of Use</a></h2>
+  <h2>Unterwegs in der App</h2>
+  <div class="apps">
+    <img src="bilder/app.png" alt="App-Symbol Tatbestandskatalog">
+    <img src="bilder/app2.png" alt="Alternatives App-Symbol">
+    <div style="flex:1 1 200px">
+      <p style="margin:0 0 10px">Offline nachschlagen, Tatbestände merken, eigene
+         Notizen anlegen und Verkehrszeichen nachsehen.</p>
+      <p style="margin:0">
+        <a class="appknopf" href="https://apps.apple.com/de/app/tatbestandskatalog/id6473509923">iPhone</a>
+        <a class="appknopf" href="https://play.google.com/store/apps/details?id=com.yp.tatbestandskatalog">Android</a>
+      </p>
+    </div>
+  </div>
+</main>
 
-  <h2>ℹ️ Impressum / Legal Notice</h2>
+<footer>
+  <p>Alle Angaben ohne Gewähr. Maßgeblich ist der amtliche Bußgeldkatalog.</p>
   <p>
-    Angaben gemäß § 5 TMG / Information according to § 5 German Telemedia Act (TMG)
+    <a href="Datenschutzerkl%C3%A4rung.html">Datenschutzerklärung</a> ·
+    <a href="Nutzungsbedingungen.html">Nutzungsbedingungen</a>
   </p>
-  <p>
-    Yacouba Pfälzner<br>
-    E-Mail: <a href="mailto:developeryp1@gmail.com">developeryp1@gmail.com</a><br>
-    Die vollständige Postadresse wird auf Anfrage per E-Mail mitgeteilt.<br>
-    The full postal address will be provided upon request via email.
-  </p>
+  <p><strong>Impressum</strong> — Angaben gemäß § 5 TMG<br>
+     Yacouba Pfälzner · <a href="mailto:developeryp1@gmail.com">developeryp1@gmail.com</a><br>
+     Die vollständige Postadresse wird auf Anfrage per E-Mail mitgeteilt.</p>
+</footer>
 </body>
 </html>

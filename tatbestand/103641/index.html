@@ -7,6 +7,7 @@
 <meta name="description" content="Tatbestandsnummer 103641: Sie überschritten die zulässige Höchstgeschwindigkeit innerhalb geschlossener Ortschaft… 700 Euro, 2 Punkte.">
 <link rel="canonical" href="https://tbnr.app/tatbestand/103641/">
 <link rel="stylesheet" href="../../stil.css">
+<meta name="apple-itunes-app" content="app-id=6473509923, app-argument=tbnr://103641">
 </head>
 <body>
 <header><a href="../../katalog/">Tatbestandskatalog</a></header>
@@ -28,8 +29,15 @@
          führt zur Verlängerung der Probezeit auf vier Jahre und zur Anordnung eines
          Aufbauseminars.</div>
       <p style="margin:18px 0 0">
-      <a href="tbnr://103641" class="appknopf">In der App öffnen</a>
+      <a href="tbnr://103641" class="appknopf" id="appknopf">In der App öffnen</a>
     </p>
+    <script>
+      // Nur Android braucht eine andere Adresse. Auf dem Rechner bleibt der
+      // Knopf stehen und tut nichts — das ist dort auch die richtige Antwort.
+      if (/Android/i.test(navigator.userAgent)) {
+        document.getElementById("appknopf").href = "intent://103641#Intent;scheme=tbnr;package=com.yp.tatbestandskatalog;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.yp.tatbestandskatalog;end";
+      }
+    </script>
       <h2>Je nach Folge</h2><a class="treffer" href="../103688/">
              <span class="nr">103688</span>
              <div class="text">Sie überschritten die zulässige Höchstgeschwindigkeit innerhalb geschlossener Ortschaften bei einer Sichtweite von weniger als 50 m durch Nebel, Schneefall oder Regen um (51 - 60) km/h. Zulässige Geschwindigkeit: 50 km/h. Festgestellte Geschwindigkeit (nach Toleranzabzug): ... km/h.</div><div class="marken"><span class="marke">560 €</span><span class="marke">2 Punkte</span><span class="marke">Fahrverbot 2 Monat(e)</span><span class="marke a">A-Verstoß</span><span class="marke">(andere Kfz)</span></div></a><div class="treffer aktuell"><span class="nr">103641</span>

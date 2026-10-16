@@ -40,6 +40,26 @@
   .feld span { font-size:13px; color:var(--gedaempft); display:block; margin-bottom:2px; }
   .hinweis { color:var(--gedaempft); font-size:14px; }
   .aktuell { background:var(--flaeche); border-left:3px solid var(--blau); padding-left:11px; }
+  /* Startseite */
+  .buehne { background:linear-gradient(160deg,#32ADE6,#2563eb); color:#fff;
+    padding:52px 20px 44px; text-align:center; }
+  /* Mitwachsend, damit der lange Name auch auf schmalen Geraeten passt. */
+  .buehne h1 { font-size:clamp(27px,8vw,42px); margin:0 0 10px; letter-spacing:-.5px;
+    overflow-wrap:anywhere; }
+  .buehne p { margin:0 auto; max-width:460px; opacity:.92; font-size:17px; }
+  .buehne form { max-width:460px; margin:26px auto 0; }
+  .buehne input { background:#fff; color:#11181c; border:0; }
+  .buehne button { background:#11181c; }
+  .zeichen { display:flex; justify-content:center; gap:14px; flex-wrap:wrap;
+    padding:22px 16px 0; }
+  .zeichen img { width:52px; height:52px; object-fit:contain; opacity:.9; }
+  .karten { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
+  .karte { display:block; background:var(--flaeche); border-radius:14px;
+    padding:14px 16px; text-decoration:none; color:inherit; }
+  .karte:hover { outline:2px solid var(--blau); }
+  .apps { display:flex; gap:18px; align-items:center; flex-wrap:wrap;
+    background:var(--flaeche); border-radius:16px; padding:20px; margin-top:14px; }
+  .apps img { width:76px; height:76px; border-radius:17px; }
   .appknopf { display:inline-block; padding:11px 18px; border-radius:10px;
     background:var(--blau); color:#fff; text-decoration:none; font-weight:600; }
   footer { max-width:760px; margin:0 auto; padding:0 16px 40px;

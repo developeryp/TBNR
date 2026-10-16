@@ -7,6 +7,7 @@
 <meta name="description" content="Tatbestandsnummer 131101: Sie benutzten mit &lt;Inline-Skates/Rollschuhen&gt; unzulässig &lt;die Fahrbahn/den Seitenstreif… 15 Euro.">
 <link rel="canonical" href="https://tbnr.app/tatbestand/131101/">
 <link rel="stylesheet" href="../../stil.css">
+<meta name="apple-itunes-app" content="app-id=6473509923, app-argument=tbnr://131101">
 </head>
 <body>
 <header><a href="../../katalog/">Tatbestandskatalog</a></header>
@@ -26,8 +27,15 @@
       
       
       <p style="margin:18px 0 0">
-      <a href="tbnr://131101" class="appknopf">In der App öffnen</a>
+      <a href="tbnr://131101" class="appknopf" id="appknopf">In der App öffnen</a>
     </p>
+    <script>
+      // Nur Android braucht eine andere Adresse. Auf dem Rechner bleibt der
+      // Knopf stehen und tut nichts — das ist dort auch die richtige Antwort.
+      if (/Android/i.test(navigator.userAgent)) {
+        document.getElementById("appknopf").href = "intent://131101#Intent;scheme=tbnr;package=com.yp.tatbestandskatalog;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.yp.tatbestandskatalog;end";
+      }
+    </script>
       <h2>Je nach Folge</h2><a class="treffer" href="../131100/">
              <span class="nr">131100</span>
              <div class="text">Sie benutzten mit &lt;Inline-Skates/Rollschuhen&gt; unzulässig &lt;die Fahrbahn/den Seitenstreifen/den Radweg&gt;.</div><div class="marken"><span class="marke">10 €</span></div></a><div class="treffer aktuell"><span class="nr">131101</span>
