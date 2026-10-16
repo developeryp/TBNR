@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bußgeldkatalog durchsuchen – Tatbestandskatalog</title>
 <meta name="description" content="Alle Tatbestände des amtlichen Bußgeldkatalogs durchsuchen — mit Tatbestandsnummer, Bußgeld, Punkten und Fahrverbot.">
-<link rel="canonical" href="https://developeryp.github.io/TBNR/katalog/">
+<link rel="canonical" href="https://tbnr.app/katalog/">
 <link rel="stylesheet" href="../stil.css">
 </head>
 <body>
@@ -31,7 +31,7 @@
 </footer>
 <script>
 (function () {
-  var daten = [], synonyme = {"einparken":"Parklücke","Zebrastreifen":"Fußgängerüberweg","e-scooter":"Elektrokleinstfahrzeug","handy":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","telefon":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","angeschnallt":"Sicherheitsgurt","rote Ampel":"Rotlicht der Lichtzeichenanlage","motorrad":"Kraftrad","smartphone":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","halteverbot":"Haltverbot","tüv":"Hauptuntersuchung","ausparken":"Parklücke","Anschnaller":"Sicherheitsgurt","Standstreifen":"Seitenstreifen","laptop":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","Blitzer":"Verkehrsüberwachungsmaßnahmen","blinker":"Fahrtrichtungsanzeiger","ampel":"Lichtzeichenanlage","thc":"Tetrahydrocannabinol","stop":"Zeichen 206","innerorts":"innerhalb geschlossener Ortschaften","Behindertenparkplatz":"Sonderparkplatz","einfädeln":"sie wechselten den Fahrstreifen","scooter":"Elektrokleinstfahrzeug"}, PFADJS = "tatbestand";
+  var daten = [], synonyme = {"ampel":"Lichtzeichenanlage","halteverbot":"Haltverbot","smartphone":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","thc":"Tetrahydrocannabinol","rote Ampel":"Rotlicht der Lichtzeichenanlage","motorrad":"Kraftrad","ausparken":"Parklücke","blinker":"Fahrtrichtungsanzeiger","handy":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","scooter":"Elektrokleinstfahrzeug","Blitzer":"Verkehrsüberwachungsmaßnahmen","telefon":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","Behindertenparkplatz":"Sonderparkplatz","stop":"Zeichen 206","einparken":"Parklücke","angeschnallt":"Sicherheitsgurt","innerorts":"innerhalb geschlossener Ortschaften","laptop":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","Zebrastreifen":"Fußgängerüberweg","einfädeln":"sie wechselten den Fahrstreifen","Anschnaller":"Sicherheitsgurt","tüv":"Hauptuntersuchung","Standstreifen":"Seitenstreifen","e-scooter":"Elektrokleinstfahrzeug"}, PFADJS = "tatbestand";
   var feld = document.getElementById("q"), liste = document.getElementById("liste");
   var bereich = "";
 

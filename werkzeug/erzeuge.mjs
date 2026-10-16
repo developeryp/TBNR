@@ -29,7 +29,7 @@ const DOKUMENT =
 
 /** Oeffentliche Adresse. Nur fuer Sitemap und canonical — alle Verweise
  *  innerhalb der Seiten sind relativ und ueberstehen einen Domainwechsel. */
-const BASIS = process.env.BASIS || "https://developeryp.github.io/TBNR";
+const BASIS = process.env.BASIS || "https://tbnr.app";
 
 const BLAU = "#32ADE6";
 
