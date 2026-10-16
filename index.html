@@ -27,10 +27,30 @@
       text-decoration: none;
       font-weight: bold;
     }
+    .katalog { text-align: center; margin: 2rem 0 0.3rem; }
+    .katalog a {
+      display: inline-block;
+      padding: 14px 26px;
+      border-radius: 10px;
+      background: #32ADE6;
+      color: #fff;
+      font-size: 1.1rem;
+    }
+    .unter { text-align: center; color: #666; margin-top: 0; }
   </style>
 </head>
 <body>
-  <h1>Rechtliche Informationen / Legal Information</h1>
+  <h1>Tatbestandskatalog</h1>
+
+  <!-- Wer tbnr.app direkt eintippt, soll zuerst den Katalog sehen und nicht
+       das Impressum. Die rechtlichen Seiten bleiben darunter, weil die
+       App-Stores auf diese Adresse verweisen. -->
+  <p class="katalog">
+    <a href="katalog/">Bußgeldkatalog durchsuchen →</a>
+  </p>
+  <p class="unter">Alle Tatbestände mit Nummer, Bußgeld, Punkten und Fahrverbot.</p>
+
+  <h1 style="font-size:1.3rem;margin-top:3rem">Rechtliche Informationen / Legal Information</h1>
 
   <h2><a href="Datenschutzerklärung.html">📄 Datenschutzerklärung / Privacy Policy</a></h2>
   <h2><a href="Nutzungsbedingungen.html">📜 Nutzungsbedingungen / Terms of Use</a></h2>

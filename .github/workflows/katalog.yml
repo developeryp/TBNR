@@ -11,11 +11,12 @@ name: Katalog erzeugen
 on:
   schedule:
     - cron: "17 4 * * *"      # taeglich 4:17 UTC
-  push:
-    paths:
-      - "werkzeug/erzeuge.mjs"
-      - ".github/workflows/katalog.yml"
   workflow_dispatch:
+
+# Bewusst kein push-Ausloeser: Wer den Erzeuger aendert, laesst ihn oertlich
+# laufen und checkt das Ergebnis gleich mit ein. Liefe die Action zusaetzlich
+# bei jedem Push, schoebe sie einen eigenen Commit dazwischen und der naechste
+# Push von Hand wuerde abgewiesen.
 
 permissions:
   contents: write

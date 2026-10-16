@@ -138,6 +138,8 @@ const STIL = `
   .feld span { font-size:13px; color:var(--gedaempft); display:block; margin-bottom:2px; }
   .hinweis { color:var(--gedaempft); font-size:14px; }
   .aktuell { background:var(--flaeche); border-left:3px solid var(--blau); padding-left:11px; }
+  .appknopf { display:inline-block; padding:11px 18px; border-radius:10px;
+    background:var(--blau); color:#fff; text-decoration:none; font-weight:600; }
   footer { max-width:760px; margin:0 auto; padding:0 16px 40px;
     color:var(--gedaempft); font-size:13px; }
   footer a { color:var(--blau); }
@@ -217,6 +219,14 @@ function tatbestandSeite(e, verwandte) {
              <div class="text">${schuetze(v.text)}</div>${marken(v)}</a>`).join("")
     : "";
 
+  // Beide Apps lesen die Nummer aus dem Host der Adresse (SceneDelegate
+  // unter iOS, intent.data.host unter Android) — "tbnr://112665" oeffnet den
+  // Tatbestand also direkt. Ist die App nicht da, passiert nichts; darum
+  // stehen die Store-Verweise weiterhin in der Fusszeile.
+  const appKnopf = `<p style="margin:18px 0 0">
+      <a href="tbnr://${e.nummer}" class="appknopf">In der App öffnen</a>
+    </p>`;
+
   const kurz = e.text.length > 90 ? e.text.slice(0, 87) + "…" : e.text;
   const zahlen = [
     e.bussgeld ? `${e.bussgeld} €` : null,
@@ -250,6 +260,7 @@ function tatbestandSeite(e, verwandte) {
       ${e.paragraphen ? `<div class="feld"><span>Rechtsgrundlage</span>${schuetze(e.paragraphen)}</div>` : ""}
       ${e.fahrzeugart ? `<div class="feld"><span>Fahrzeugart</span>${schuetze(e.fahrzeugart)}</div>` : ""}
       ${probezeit}
+      ${appKnopf}
       ${leiter}`,
   });
 }

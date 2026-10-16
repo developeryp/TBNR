@@ -40,6 +40,8 @@
   .feld span { font-size:13px; color:var(--gedaempft); display:block; margin-bottom:2px; }
   .hinweis { color:var(--gedaempft); font-size:14px; }
   .aktuell { background:var(--flaeche); border-left:3px solid var(--blau); padding-left:11px; }
+  .appknopf { display:inline-block; padding:11px 18px; border-radius:10px;
+    background:var(--blau); color:#fff; text-decoration:none; font-weight:600; }
   footer { max-width:760px; margin:0 auto; padding:0 16px 40px;
     color:var(--gedaempft); font-size:13px; }
   footer a { color:var(--blau); }
