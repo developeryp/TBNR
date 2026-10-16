@@ -539,7 +539,7 @@ function zeichenSeite(z, passende, hatBild) {
     pfad: `/${PFAD_VZ}/${z.nummer}/`,
     hoch,
     inhalt: `
-      <p class="nr" style="font-size:19px">Zeichen ${schuetze(z.nummer)}</p>
+      <p class="grossenummer">Zeichen ${schuetze(z.nummer)}</p>
       <h1>${schuetze(z.beschreibung)}</h1>
       ${bild}
       ${liste}`,
