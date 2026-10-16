@@ -1,0 +1,45 @@
+# Haelt die Katalog-Seiten mit Firestore im Gleichstand.
+#
+# Laeuft einmal taeglich und bei jeder Aenderung am Erzeuger. Hat sich in
+# Firestore nichts geaendert, entstehen identische Dateien und es wird nichts
+# eingecheckt — der Lauf bleibt dann folgenlos.
+#
+# Von Hand ausloesen: Actions → Katalog erzeugen → Run workflow
+
+name: Katalog erzeugen
+
+on:
+  schedule:
+    - cron: "17 4 * * *"      # taeglich 4:17 UTC
+  push:
+    paths:
+      - "werkzeug/erzeuge.mjs"
+      - ".github/workflows/katalog.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  erzeugen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Seiten aus Firestore erzeugen
+        run: node werkzeug/erzeuge.mjs
+
+      - name: Aenderungen einchecken
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Keine Aenderungen — Firestore unveraendert."
+          else
+            git commit -m "Katalog aktualisiert ($(date -u +%Y-%m-%d))"
+            git push
+          fi

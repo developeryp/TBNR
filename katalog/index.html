@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bußgeldkatalog durchsuchen – Tatbestandskatalog</title>
+<meta name="description" content="Alle Tatbestände des amtlichen Bußgeldkatalogs durchsuchen — mit Tatbestandsnummer, Bußgeld, Punkten und Fahrverbot.">
+<link rel="canonical" href="https://developeryp.github.io/TBNR/katalog/">
+<link rel="stylesheet" href="../stil.css">
+</head>
+<body>
+<header><a href="../katalog/">Tatbestandskatalog</a></header>
+<main>
+      <form id="suche">
+        <input type="search" id="q" name="q" placeholder="Tatbestand oder Nummer suchen …" autofocus>
+        <button type="submit">Suchen</button>
+      </form>
+      <div class="marken" style="margin:0 0 20px">
+      <a class="marke stark" href="#" data-bereich="">Alle</a>
+      <a class="marke" href="#" data-bereich="1">StVO</a><a class="marke" href="#" data-bereich="2">FeV</a><a class="marke" href="#" data-bereich="3">StVZO</a><a class="marke" href="#" data-bereich="6">eKFV</a><a class="marke" href="#" data-bereich="8">FZV</a>
+    </div>
+      <div id="liste"></div>
+      <noscript><p class="hinweis">Für die Suche wird JavaScript benötigt. Einzelne
+        Tatbestände sind auch ohne erreichbar, etwa unter <code>/t/112665/</code>.</p></noscript></main>
+<footer>
+  <p>Alle Angaben ohne Gewähr. Maßgeblich ist der amtliche Bußgeldkatalog.</p>
+  <p>Unterwegs nachschlagen, Tatbestände merken und eigene Notizen anlegen:
+     <a href="https://apps.apple.com/de/app/tatbestandskatalog/id6473509923">iPhone</a> ·
+     <a href="https://play.google.com/store/apps/details?id=com.yp.tatbestandskatalog">Android</a></p>
+  <p><a href="../index.html">Rechtliche Informationen</a></p>
+</footer>
+<script>
+(function () {
+  var daten = [], synonyme = {"ausparken":"Parklücke","Anschnaller":"Sicherheitsgurt","smartphone":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","thc":"Tetrahydrocannabinol","innerorts":"innerhalb geschlossener Ortschaften","handy":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","Behindertenparkplatz":"Sonderparkplatz","stop":"Zeichen 206","telefon":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","tüv":"Hauptuntersuchung","Blitzer":"Verkehrsüberwachungsmaßnahmen","angeschnallt":"Sicherheitsgurt","ampel":"Lichtzeichenanlage","blinker":"Fahrtrichtungsanzeiger","e-scooter":"Elektrokleinstfahrzeug","einparken":"Parklücke","einfädeln":"sie wechselten den Fahrstreifen","laptop":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","halteverbot":"Haltverbot","motorrad":"Kraftrad","rote Ampel":"Rotlicht der Lichtzeichenanlage","scooter":"Elektrokleinstfahrzeug","Zebrastreifen":"Fußgängerüberweg","Standstreifen":"Seitenstreifen"};
+  var feld = document.getElementById("q"), liste = document.getElementById("liste");
+  var bereich = "";
+
+  function entschaerfe(t) {
+    return (t || "").toLowerCase().normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "").replace(/[.,]/g, "");
+  }
+  function marken(e) {
+    var m = [];
+    if (e.g) m.push('<span class="marke">' + e.g + ' €</span>');
+    if (e.p && e.p !== "0") m.push('<span class="marke">' + e.p + (e.p === "1" ? " Punkt" : " Punkte") + '</span>');
+    if (e.v) m.push('<span class="marke ' + e.v.toLowerCase() + '">' + e.v + '-Verstoß</span>');
+    if (e.f) m.push('<span class="marke">' + e.f + '</span>');
+    return '<div class="marken">' + m.join("") + '</div>';
+  }
+  function zeichne() {
+    var anfrage = feld.value.trim();
+    if (!anfrage) { liste.innerHTML = ""; return; }
+    var worte = entschaerfe(anfrage).split(/\s+/).filter(Boolean);
+    var grund = bereich ? daten.filter(function (e) { return e.n[0] === bereich; }) : daten;
+    var treffer = grund.filter(function (e) {
+      return worte.every(function (w) { return e.s.indexOf(w) >= 0; });
+    });
+    if (!treffer.length) {
+      var tipps = [], tief = anfrage.toLowerCase();
+      for (var k in synonyme) {
+        var s = k.toLowerCase();
+        if (tief.indexOf(s) >= 0 || s.indexOf(tief) >= 0) tipps.push(synonyme[k]);
+      }
+      liste.innerHTML = '<h1>Keine Treffer</h1><p class="hinweis">Der Katalog ist in '
+        + 'Amtsdeutsch verfasst und schreibt etwa „Höchstgeschwindigkeit" statt „geblitzt".</p>'
+        + (tipps.length ? '<h2>Meinten Sie</h2><div class="marken">' + tipps.slice(0,6).map(
+            function (t) { return '<a class="marke stark" href="?q=' + encodeURIComponent(t) + '">' + t + '</a>'; }
+          ).join("") + '</div>' : "");
+      return;
+    }
+    liste.innerHTML = '<h1>' + treffer.length + ' Treffer</h1>'
+      + treffer.slice(0, 200).map(function (e) {
+          return '<a class="treffer" href="../t/' + e.n + '/"><span class="nr">' + e.n
+            + '</span><div class="text">' + e.t + '</div>' + marken(e) + '</a>';
+        }).join("");
+  }
+  feld.addEventListener("input", zeichne);
+  document.getElementById("suche").addEventListener("submit", function (ev) {
+    ev.preventDefault(); zeichne();
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-bereich]"), function (a) {
+    a.addEventListener("click", function (ev) {
+      ev.preventDefault();
+      bereich = a.getAttribute("data-bereich");
+      Array.prototype.forEach.call(document.querySelectorAll("[data-bereich]"), function (x) {
+        x.className = "marke" + (x === a ? " stark" : "");
+      });
+      zeichne();
+    });
+  });
+  fetch("daten.json").then(function (r) { return r.json(); }).then(function (d) {
+    daten = d;
+    var start = new URLSearchParams(location.search).get("q");
+    if (start) { feld.value = start; }
+    zeichne();
+  });
+})();
+</script>
+</body>
+</html>
