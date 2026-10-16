@@ -19,6 +19,8 @@
       <a class="marke stark" href="#" data-bereich="">Alle</a>
       <a class="marke" href="#" data-bereich="1">StVO</a><a class="marke" href="#" data-bereich="2">FeV</a><a class="marke" href="#" data-bereich="3">StVZO</a><a class="marke" href="#" data-bereich="6">eKFV</a><a class="marke" href="#" data-bereich="8">FZV</a>
     </div>
+      <p style="margin:-6px 0 18px"><a class="marke" style="padding:6px 12px"
+         href="../verkehrszeichen/">Oder nach Verkehrszeichen suchen →</a></p>
       <div id="liste"></div>
       <noscript><p class="hinweis">Für die Suche wird JavaScript benötigt. Einzelne
         Tatbestände sind auch ohne erreichbar, etwa unter <code>/tatbestand/112665/</code>.</p></noscript></main>
@@ -27,11 +29,13 @@
   <p>Unterwegs nachschlagen, Tatbestände merken und eigene Notizen anlegen:
      <a href="https://apps.apple.com/de/app/tatbestandskatalog/id6473509923">iPhone</a> ·
      <a href="https://play.google.com/store/apps/details?id=com.yp.tatbestandskatalog">Android</a></p>
-  <p><a href="../index.html">Rechtliche Informationen</a></p>
+  <p><a href="../">Startseite</a> ·
+     <a href="../Datenschutzerkl%C3%A4rung.html">Datenschutzerklärung</a> ·
+     <a href="../Nutzungsbedingungen.html">Nutzungsbedingungen</a></p>
 </footer>
 <script>
 (function () {
-  var daten = [], synonyme = {"ausparken":"Parklücke","telefon":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","tüv":"Hauptuntersuchung","halteverbot":"Haltverbot","motorrad":"Kraftrad","scooter":"Elektrokleinstfahrzeug","Anschnaller":"Sicherheitsgurt","smartphone":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","Blitzer":"Verkehrsüberwachungsmaßnahmen","einfädeln":"sie wechselten den Fahrstreifen","Zebrastreifen":"Fußgängerüberweg","einparken":"Parklücke","stop":"Zeichen 206","thc":"Tetrahydrocannabinol","blinker":"Fahrtrichtungsanzeiger","Behindertenparkplatz":"Sonderparkplatz","handy":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","rote Ampel":"Rotlicht der Lichtzeichenanlage","innerorts":"innerhalb geschlossener Ortschaften","e-scooter":"Elektrokleinstfahrzeug","Standstreifen":"Seitenstreifen","ampel":"Lichtzeichenanlage","angeschnallt":"Sicherheitsgurt","laptop":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist"}, PFADJS = "tatbestand";
+  var daten = [], synonyme = {"halteverbot":"Haltverbot","handy":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","smartphone":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","Zebrastreifen":"Fußgängerüberweg","einfädeln":"sie wechselten den Fahrstreifen","scooter":"Elektrokleinstfahrzeug","e-scooter":"Elektrokleinstfahrzeug","thc":"Tetrahydrocannabinol","rote Ampel":"Rotlicht der Lichtzeichenanlage","stop":"Zeichen 206","motorrad":"Kraftrad","Behindertenparkplatz":"Sonderparkplatz","tüv":"Hauptuntersuchung","ausparken":"Parklücke","laptop":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","einparken":"Parklücke","telefon":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","Anschnaller":"Sicherheitsgurt","ampel":"Lichtzeichenanlage","innerorts":"innerhalb geschlossener Ortschaften","Blitzer":"Verkehrsüberwachungsmaßnahmen","Standstreifen":"Seitenstreifen","blinker":"Fahrtrichtungsanzeiger","angeschnallt":"Sicherheitsgurt"}, PFADJS = "tatbestand";
   var feld = document.getElementById("q"), liste = document.getElementById("liste");
   var bereich = "";
 

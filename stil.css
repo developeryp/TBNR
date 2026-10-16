@@ -40,6 +40,15 @@
   .feld span { font-size:13px; color:var(--gedaempft); display:block; margin-bottom:2px; }
   .hinweis { color:var(--gedaempft); font-size:14px; }
   .aktuell { background:var(--flaeche); border-left:3px solid var(--blau); padding-left:11px; }
+  .zeichenbild { max-width:240px; width:100%; height:auto; }
+  .zeichengitter { display:grid; gap:10px;
+    grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); }
+  .zeichenkachel { display:flex; flex-direction:column; align-items:center;
+    gap:6px; padding:14px 10px; border-radius:14px; background:var(--flaeche);
+    text-decoration:none; color:inherit; text-align:center; }
+  .zeichenkachel:hover { outline:2px solid var(--blau); }
+  .zeichenkachel img { width:62px; height:62px; object-fit:contain; }
+  .zeichenkachel .bez { font-size:12px; color:var(--gedaempft); line-height:1.3; }
   /* Startseite */
   .buehne { background:linear-gradient(160deg,#32ADE6,#2563eb); color:#fff;
     padding:52px 20px 44px; text-align:center; }
@@ -50,9 +59,6 @@
   .buehne form { max-width:460px; margin:26px auto 0; }
   .buehne input { background:#fff; color:#11181c; border:0; }
   .buehne button { background:#11181c; }
-  .zeichen { display:flex; justify-content:center; gap:14px; flex-wrap:wrap;
-    padding:22px 16px 0; }
-  .zeichen img { width:52px; height:52px; object-fit:contain; opacity:.9; }
   .karten { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
   .karte { display:block; background:var(--flaeche); border-radius:14px;
     padding:14px 16px; text-decoration:none; color:inherit; }

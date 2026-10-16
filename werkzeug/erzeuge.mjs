@@ -18,7 +18,7 @@
  * Taeglich automatisch ueber .github/workflows/katalog.yml
  */
 
-import { mkdir, writeFile, rm } from "node:fs/promises";
+import { mkdir, writeFile, rm, readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
@@ -27,15 +27,23 @@ const DOKUMENT =
   `https://firestore.googleapis.com/v1/projects/${PROJEKT}` +
   "/databases/(default)/documents/Einstellungen/TB/Sonstiges/Sonstiges";
 
+/** Die Verkehrszeichen liegen in einem eigenen Dokument. */
+const DOKUMENT_VZ =
+  `https://firestore.googleapis.com/v1/projects/${PROJEKT}` +
+  "/databases/(default)/documents/Einstellungen/VZ";
+
 /** Oeffentliche Adresse. Nur fuer Sitemap und canonical — alle Verweise
  *  innerhalb der Seiten sind relativ und ueberstehen einen Domainwechsel. */
 const BASIS = process.env.BASIS || "https://tbnr.app";
+
+const wurzelPfad = fileURLToPath(new URL("..", import.meta.url));
 
 const BLAU = "#32ADE6";
 
 /** Pfadstueck vor der Nummer. Ausgeschrieben, weil Google das Stichwort in
  *  der Adresse mitliest — "/tatbestand/112665/" schlaegt "/t/112665/". */
 const PFAD = "tatbestand";
+const PFAD_VZ = "verkehrszeichen";
 
 /** Kennungen der beiden Apps — fuer Deeplinks und Banner. */
 const APPLE_ID = "6473509923";
@@ -94,6 +102,40 @@ function zerlege(eintrag) {
   };
 }
 
+/**
+ * Verkehrszeichen laden.
+ *
+ * Format wie in der App: "101-10 Flugbetrieb - Aufstellung rechts" — bis zum
+ * ersten Leerzeichen die Nummer, danach die Beschreibung. Erst Firestore
+ * (dasselbe Dokument wie die Apps), sonst die mitgelieferte Liste.
+ */
+async function holeZeichen() {
+  let lang, quelle = "Firestore";
+  try {
+    const antwort = await fetch(DOKUMENT_VZ);
+    if (!antwort.ok) throw new Error(String(antwort.status));
+    const doc = await antwort.json();
+    lang = doc?.fields?.VZBeschreibungLangOnline?.arrayValue?.values?.map((v) => v.stringValue);
+    if (!lang || lang.length < 50) throw new Error("Liste unbrauchbar");
+  } catch (fehler) {
+    console.log("  Zeichen aus Firestore nicht verfuegbar:", fehler.message);
+    lang = JSON.parse(await readFile(wurzelPfad + "daten/vz_lang.json", "utf8"));
+    quelle = "mitgeliefert";
+  }
+
+  const zeichen = lang
+    .map((z) => (z || "").trim())
+    .filter(Boolean)
+    .map((z) => {
+      const trenner = z.indexOf(" ");
+      if (trenner <= 0) return null;
+      return { nummer: z.slice(0, trenner), beschreibung: z.slice(trenner + 1).trim() };
+    })
+    .filter(Boolean);
+
+  return { zeichen, quelle };
+}
+
 // --------------------------------------------------------------- Bausteine
 
 function schuetze(text) {
@@ -144,6 +186,15 @@ const STIL = `
   .feld span { font-size:13px; color:var(--gedaempft); display:block; margin-bottom:2px; }
   .hinweis { color:var(--gedaempft); font-size:14px; }
   .aktuell { background:var(--flaeche); border-left:3px solid var(--blau); padding-left:11px; }
+  .zeichenbild { max-width:240px; width:100%; height:auto; }
+  .zeichengitter { display:grid; gap:10px;
+    grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); }
+  .zeichenkachel { display:flex; flex-direction:column; align-items:center;
+    gap:6px; padding:14px 10px; border-radius:14px; background:var(--flaeche);
+    text-decoration:none; color:inherit; text-align:center; }
+  .zeichenkachel:hover { outline:2px solid var(--blau); }
+  .zeichenkachel img { width:62px; height:62px; object-fit:contain; }
+  .zeichenkachel .bez { font-size:12px; color:var(--gedaempft); line-height:1.3; }
   /* Startseite */
   .buehne { background:linear-gradient(160deg,#32ADE6,#2563eb); color:#fff;
     padding:52px 20px 44px; text-align:center; }
@@ -154,9 +205,6 @@ const STIL = `
   .buehne form { max-width:460px; margin:26px auto 0; }
   .buehne input { background:#fff; color:#11181c; border:0; }
   .buehne button { background:#11181c; }
-  .zeichen { display:flex; justify-content:center; gap:14px; flex-wrap:wrap;
-    padding:22px 16px 0; }
-  .zeichen img { width:52px; height:52px; object-fit:contain; opacity:.9; }
   .karten { display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
   .karte { display:block; background:var(--flaeche); border-radius:14px;
     padding:14px 16px; text-decoration:none; color:inherit; }
@@ -190,7 +238,9 @@ function geruest({ titel, beschreibung, inhalt, pfad, hoch, skript = "", banner 
   <p>Unterwegs nachschlagen, Tatbestände merken und eigene Notizen anlegen:
      <a href="https://apps.apple.com/de/app/tatbestandskatalog/id6473509923">iPhone</a> ·
      <a href="https://play.google.com/store/apps/details?id=com.yp.tatbestandskatalog">Android</a></p>
-  <p><a href="${hoch}index.html">Rechtliche Informationen</a></p>
+  <p><a href="${hoch}">Startseite</a> ·
+     <a href="${hoch}Datenschutzerkl%C3%A4rung.html">Datenschutzerklärung</a> ·
+     <a href="${hoch}Nutzungsbedingungen.html">Nutzungsbedingungen</a></p>
 </footer>${skript}
 </body>
 </html>`;
@@ -402,9 +452,93 @@ function sucheSeite(synonyme) {
         <button type="submit">Suchen</button>
       </form>
       ${leiste}
+      <p style="margin:-6px 0 18px"><a class="marke" style="padding:6px 12px"
+         href="../${PFAD_VZ}/">Oder nach Verkehrszeichen suchen →</a></p>
       <div id="liste"></div>
       <noscript><p class="hinweis">Für die Suche wird JavaScript benötigt. Einzelne
         Tatbestände sind auch ohne erreichbar, etwa unter <code>/${PFAD}/112665/</code>.</p></noscript>`,
+  });
+}
+
+/** Ein Verkehrszeichen gross, dazu die Tatbestaende dazu. */
+function zeichenSeite(z, passende, hatBild) {
+  const hoch = "../../";
+  const bild = hatBild
+    ? `<p style="text-align:center;margin:8px 0 20px">
+         <img src="${hoch}bilder/vz/${encodeURIComponent(z.nummer)}.png"
+              alt="Verkehrszeichen ${schuetze(z.nummer)}" class="zeichenbild"></p>`
+    : "";
+
+  const liste = passende.length
+    ? `<h2>${passende.length} ${passende.length === 1 ? "Tatbestand" : "Tatbestände"} dazu</h2>`
+      + passende.map((e) => `<a class="treffer" href="${hoch}${PFAD}/${e.nummer}/">
+           <span class="nr">${schuetze(e.nummer)}</span>
+           <div class="text">${schuetze(e.text)}</div>${marken(e)}</a>`).join("")
+    : `<p class="hinweis">Zu diesem Zeichen nennt der Katalog keinen Tatbestand,
+         der die Nummer im Text führt.</p>`;
+
+  return geruest({
+    titel: `Verkehrszeichen ${z.nummer} – ${z.beschreibung}`,
+    beschreibung: `Zeichen ${z.nummer}: ${z.beschreibung}. `
+      + `${passende.length} zugehörige Tatbestände mit Bußgeld und Punkten.`,
+    pfad: `/${PFAD_VZ}/${z.nummer}/`,
+    hoch,
+    inhalt: `
+      <p class="nr" style="font-size:19px">Zeichen ${schuetze(z.nummer)}</p>
+      <h1>${schuetze(z.beschreibung)}</h1>
+      ${bild}
+      ${liste}`,
+  });
+}
+
+/** Suche ueber alle Zeichen — dieselbe Regel wie in der App. */
+function zeichenSuchSeite(anzahl) {
+  const skript = `
+<script>
+(function () {
+  var daten = [], feld = document.getElementById("q"), liste = document.getElementById("liste");
+  function zeichne() {
+    var text = feld.value.trim().toLowerCase();
+    // Wie VerkehrszeichenRepository.suche: Nummer oder Beschreibung enthaelt
+    // den Suchtext. Ohne Eingabe alle, wie in der Uebersicht der App.
+    var treffer = !text ? daten : daten.filter(function (z) {
+      return z.n.toLowerCase().indexOf(text) >= 0 || z.b.toLowerCase().indexOf(text) >= 0;
+    });
+    liste.innerHTML = '<h1>' + treffer.length + (treffer.length === 1 ? ' Zeichen' : ' Zeichen') + '</h1>'
+      + '<div class="zeichengitter">' + treffer.slice(0, 300).map(function (z) {
+          return '<a class="zeichenkachel" href="' + encodeURIComponent(z.n) + '/">'
+            + (z.i ? '<img src="../bilder/vz/' + encodeURIComponent(z.n) + '.png" alt="" loading="lazy">' : '')
+            + '<span class="nr">' + z.n + '</span>'
+            + '<span class="bez">' + z.b + '</span></a>';
+        }).join("") + '</div>';
+  }
+  feld.addEventListener("input", zeichne);
+  document.getElementById("suche").addEventListener("submit", function (e) { e.preventDefault(); zeichne(); });
+  fetch("daten.json").then(function (r) { return r.json(); }).then(function (d) {
+    daten = d;
+    var start = new URLSearchParams(location.search).get("q");
+    if (start) feld.value = start;
+    zeichne();
+  });
+})();
+</script>`;
+
+  return geruest({
+    titel: "Verkehrszeichen suchen – Tatbestandskatalog",
+    beschreibung: `Alle ${anzahl} Verkehrszeichen mit Bild und Bedeutung — `
+      + "dazu die passenden Tatbestände mit Bußgeld und Punkten.",
+    pfad: `/${PFAD_VZ}/`,
+    hoch: "../",
+    skript,
+    inhalt: `
+      <form id="suche">
+        <input type="search" id="q" placeholder="Zeichen oder Bedeutung suchen …" autofocus>
+        <button type="submit">Suchen</button>
+      </form>
+      <p style="margin:-6px 0 18px"><a class="marke" style="padding:6px 12px"
+         href="../katalog/">Oder nach Tatbeständen suchen →</a></p>
+      <div id="liste"></div>
+      <noscript><p class="hinweis">Für die Suche wird JavaScript benötigt.</p></noscript>`,
   });
 }
 
@@ -431,6 +565,34 @@ for (const e of daten) {
 }
 console.log(`  ${daten.length} Seiten geschrieben`);
 
+// ------------------------------------------------------- Verkehrszeichen
+
+const { zeichen, quelle: vzQuelle } = await holeZeichen();
+const bilderDa = new Set(
+  (await readdir(wurzel + "bilder/vz").catch(() => []))
+    .filter((d) => d.endsWith(".png"))
+    .map((d) => d.slice(0, -4))
+);
+console.log(`  ${zeichen.length} Verkehrszeichen (${vzQuelle}), ${bilderDa.size} mit Bild`);
+
+if (existsSync(wurzel + PFAD_VZ)) await rm(wurzel + PFAD_VZ, { recursive: true });
+await mkdir(wurzel + PFAD_VZ, { recursive: true });
+
+for (const z of zeichen) {
+  // Zuordnung wie in beiden Apps: Die Zeichennummer kommt im Tatbestandstext
+  // vor — dort steht sie als "<314/315>" oder "Zeichen 274".
+  const passende = daten.filter((e) =>
+    e.text.toLowerCase().includes(z.nummer.toLowerCase())
+  );
+  await mkdir(`${wurzel}${PFAD_VZ}/${z.nummer}`, { recursive: true });
+  await writeFile(`${wurzel}${PFAD_VZ}/${z.nummer}/index.html`,
+    zeichenSeite(z, passende, bilderDa.has(z.nummer)));
+}
+await writeFile(wurzel + PFAD_VZ + "/daten.json", JSON.stringify(
+  zeichen.map((z) => ({ n: z.nummer, b: z.beschreibung, i: bilderDa.has(z.nummer) ? 1 : 0 }))));
+await writeFile(wurzel + PFAD_VZ + "/index.html", zeichenSuchSeite(zeichen.length));
+console.log(`  ${zeichen.length} Zeichenseiten geschrieben`);
+
 // Suchindex: nur was gesucht oder angezeigt wird, die Paragraphen bleiben draussen.
 const index = daten.map((e) => ({
   n: e.nummer, t: e.text, g: e.bussgeld, p: e.punkte,
@@ -445,7 +607,9 @@ await writeFile(wurzel + "stil.css", STIL);
 await writeFile(wurzel + "sitemap.xml",
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`
   + `<url><loc>${BASIS}/katalog/</loc></url>`
+  + `<url><loc>${BASIS}/${PFAD_VZ}/</loc></url>`
   + daten.map((e) => `<url><loc>${BASIS}/${PFAD}/${e.nummer}/</loc></url>`).join("")
+  + zeichen.map((z) => `<url><loc>${BASIS}/${PFAD_VZ}/${encodeURIComponent(z.nummer)}/</loc></url>`).join("")
   + `</urlset>\n`);
 
 // Der Katalog soll gefunden werden. Die rechtlichen Seiten tragen ihr eigenes
@@ -467,8 +631,6 @@ function beispiele(daten, wieViele) {
   }
   return gewaehlt;
 }
-
-const zeichen = ["206", "274-50", "267", "283", "220-10", "240", "286", "123"];
 
 const startseite = `<!doctype html>
 <html lang="de">
@@ -493,10 +655,6 @@ const startseite = `<!doctype html>
   </form>
 </div>
 
-<div class="zeichen">
-  ${zeichen.map((z) => `<img src="bilder/vz-${z}.png" alt="" loading="lazy">`).join("")}
-</div>
-
 <main>
   <h2>Beispiele aus dem Katalog</h2>
   <div class="karten">
@@ -509,6 +667,24 @@ const startseite = `<!doctype html>
   </div>
   <p style="margin-top:14px"><a class="marke stark" style="padding:9px 16px"
      href="katalog/">Alle ${daten.length} Tatbestände durchsuchen →</a></p>
+
+  <h2>Verkehrszeichen</h2>
+  <p style="margin-top:0">Zeichen nachschlagen und sehen, welche Tatbestände sich
+     darauf beziehen.</p>
+  <div class="zeichengitter">
+    ${["206", "274-50", "267", "283", "220-10", "240"]
+      .filter((n) => bilderDa.has(n))
+      .map((n) => {
+        const z = zeichen.find((x) => x.nummer === n);
+        return `<a class="zeichenkachel" href="${PFAD_VZ}/${encodeURIComponent(n)}/">
+            <img src="bilder/vz/${encodeURIComponent(n)}.png" alt="" loading="lazy">
+            <span class="nr">${n}</span>
+            <span class="bez">${schuetze((z?.beschreibung || "").slice(0, 38))}</span>
+          </a>`;
+      }).join("")}
+  </div>
+  <p style="margin-top:14px"><a class="marke stark" style="padding:9px 16px"
+     href="${PFAD_VZ}/">Alle ${zeichen.length} Verkehrszeichen →</a></p>
 
   <h2>Unterwegs in der App</h2>
   <div class="apps">

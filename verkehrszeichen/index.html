@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Verkehrszeichen suchen – Tatbestandskatalog</title>
+<meta name="description" content="Alle 1132 Verkehrszeichen mit Bild und Bedeutung — dazu die passenden Tatbestände mit Bußgeld und Punkten.">
+<link rel="canonical" href="https://tbnr.app/verkehrszeichen/">
+<link rel="stylesheet" href="../stil.css">
+</head>
+<body>
+<header><a href="../katalog/">Tatbestandskatalog</a></header>
+<main>
+      <form id="suche">
+        <input type="search" id="q" placeholder="Zeichen oder Bedeutung suchen …" autofocus>
+        <button type="submit">Suchen</button>
+      </form>
+      <p style="margin:-6px 0 18px"><a class="marke" style="padding:6px 12px"
+         href="../katalog/">Oder nach Tatbeständen suchen →</a></p>
+      <div id="liste"></div>
+      <noscript><p class="hinweis">Für die Suche wird JavaScript benötigt.</p></noscript></main>
+<footer>
+  <p>Alle Angaben ohne Gewähr. Maßgeblich ist der amtliche Bußgeldkatalog.</p>
+  <p>Unterwegs nachschlagen, Tatbestände merken und eigene Notizen anlegen:
+     <a href="https://apps.apple.com/de/app/tatbestandskatalog/id6473509923">iPhone</a> ·
+     <a href="https://play.google.com/store/apps/details?id=com.yp.tatbestandskatalog">Android</a></p>
+  <p><a href="../">Startseite</a> ·
+     <a href="../Datenschutzerkl%C3%A4rung.html">Datenschutzerklärung</a> ·
+     <a href="../Nutzungsbedingungen.html">Nutzungsbedingungen</a></p>
+</footer>
+<script>
+(function () {
+  var daten = [], feld = document.getElementById("q"), liste = document.getElementById("liste");
+  function zeichne() {
+    var text = feld.value.trim().toLowerCase();
+    // Wie VerkehrszeichenRepository.suche: Nummer oder Beschreibung enthaelt
+    // den Suchtext. Ohne Eingabe alle, wie in der Uebersicht der App.
+    var treffer = !text ? daten : daten.filter(function (z) {
+      return z.n.toLowerCase().indexOf(text) >= 0 || z.b.toLowerCase().indexOf(text) >= 0;
+    });
+    liste.innerHTML = '<h1>' + treffer.length + (treffer.length === 1 ? ' Zeichen' : ' Zeichen') + '</h1>'
+      + '<div class="zeichengitter">' + treffer.slice(0, 300).map(function (z) {
+          return '<a class="zeichenkachel" href="' + encodeURIComponent(z.n) + '/">'
+            + (z.i ? '<img src="../bilder/vz/' + encodeURIComponent(z.n) + '.png" alt="" loading="lazy">' : '')
+            + '<span class="nr">' + z.n + '</span>'
+            + '<span class="bez">' + z.b + '</span></a>';
+        }).join("") + '</div>';
+  }
+  feld.addEventListener("input", zeichne);
+  document.getElementById("suche").addEventListener("submit", function (e) { e.preventDefault(); zeichne(); });
+  fetch("daten.json").then(function (r) { return r.json(); }).then(function (d) {
+    daten = d;
+    var start = new URLSearchParams(location.search).get("q");
+    if (start) feld.value = start;
+    zeichne();
+  });
+})();
+</script>
+</body>
+</html>
