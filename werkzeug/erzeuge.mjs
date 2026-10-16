@@ -206,7 +206,13 @@ const STIL = `
     text-decoration:none; color:inherit; text-align:center; }
   .zeichenkachel:hover { outline:2px solid var(--blau); }
   .zeichenkachel img { width:62px; height:62px; object-fit:contain; }
-  .zeichenkachel .bez { font-size:12px; color:var(--gedaempft); line-height:1.3; }
+  /* Zwei Zeilen, danach drei Puenktchen — vorher wurde hart nach 40 Zeichen
+     abgeschnitten, mitten im Wort und ohne Hinweis darauf. */
+  .zeichenkachel .bez { font-size:12px; color:var(--gedaempft); line-height:1.3;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+    overflow:hidden; }
+  /* Gleich hohe Kacheln, damit das Gitter ruhig wirkt. */
+  .zeichenkachel { justify-content:flex-start; }
   .einstiege { display:grid; gap:12px; margin:26px auto 0; max-width:620px;
     grid-template-columns:repeat(auto-fit,minmax(248px,1fr)); }
   .einstiege a { display:flex; align-items:center; gap:13px; text-align:left;
@@ -701,7 +707,7 @@ function zeichenKachel(z) {
   return `<a class="zeichenkachel" href="${PFAD_VZ}/${encodeURIComponent(z.nummer)}/">
       <img src="bilder/vz/${encodeURIComponent(z.nummer)}.png" alt="" loading="lazy">
       <span class="nr">${schuetze(z.nummer)}</span>
-      <span class="bez">${schuetze(z.beschreibung.slice(0, 40))}</span>
+      <span class="bez" title="${schuetze(z.beschreibung)}">${schuetze(z.beschreibung)}</span>
     </a>`;
 }
 
