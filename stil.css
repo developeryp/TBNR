@@ -62,8 +62,10 @@
     color:#fff; text-decoration:none; padding:14px 16px; border-radius:16px;
     transition:transform .12s, background .12s; }
   .einstiege a:hover { background:rgba(255,255,255,.26); transform:translateY(-2px); }
-  .einstiege img { width:46px; height:46px; border-radius:11px; flex:0 0 auto;
-    object-fit:contain; background:#fff; }
+  /* Kein Hintergrund und keine Rundung: Die Verkehrszeichen sind freigestellt,
+     ein weisses Kaestchen dahinter saehe nach Fehler aus. Das App-Symbol
+     bringt seine runden Ecken selbst mit. */
+  .einstiege img { width:46px; height:46px; flex:0 0 auto; object-fit:contain; }
   .einstiege span { display:flex; flex-direction:column; font-size:13px;
     line-height:1.35; opacity:.9; }
   .einstiege b { font-size:17px; opacity:1; margin-bottom:1px; }
