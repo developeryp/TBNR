@@ -21,7 +21,7 @@
     </div>
       <div id="liste"></div>
       <noscript><p class="hinweis">Für die Suche wird JavaScript benötigt. Einzelne
-        Tatbestände sind auch ohne erreichbar, etwa unter <code>/t/112665/</code>.</p></noscript></main>
+        Tatbestände sind auch ohne erreichbar, etwa unter <code>/tatbestand/112665/</code>.</p></noscript></main>
 <footer>
   <p>Alle Angaben ohne Gewähr. Maßgeblich ist der amtliche Bußgeldkatalog.</p>
   <p>Unterwegs nachschlagen, Tatbestände merken und eigene Notizen anlegen:
@@ -31,7 +31,7 @@
 </footer>
 <script>
 (function () {
-  var daten = [], synonyme = {"blinker":"Fahrtrichtungsanzeiger","einfädeln":"sie wechselten den Fahrstreifen","stop":"Zeichen 206","angeschnallt":"Sicherheitsgurt","Zebrastreifen":"Fußgängerüberweg","tüv":"Hauptuntersuchung","Anschnaller":"Sicherheitsgurt","Blitzer":"Verkehrsüberwachungsmaßnahmen","motorrad":"Kraftrad","innerorts":"innerhalb geschlossener Ortschaften","ausparken":"Parklücke","halteverbot":"Haltverbot","einparken":"Parklücke","rote Ampel":"Rotlicht der Lichtzeichenanlage","laptop":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","thc":"Tetrahydrocannabinol","smartphone":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","scooter":"Elektrokleinstfahrzeug","telefon":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","handy":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","ampel":"Lichtzeichenanlage","e-scooter":"Elektrokleinstfahrzeug","Behindertenparkplatz":"Sonderparkplatz","Standstreifen":"Seitenstreifen"};
+  var daten = [], synonyme = {"einparken":"Parklücke","Zebrastreifen":"Fußgängerüberweg","e-scooter":"Elektrokleinstfahrzeug","handy":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","telefon":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","angeschnallt":"Sicherheitsgurt","rote Ampel":"Rotlicht der Lichtzeichenanlage","motorrad":"Kraftrad","smartphone":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","halteverbot":"Haltverbot","tüv":"Hauptuntersuchung","ausparken":"Parklücke","Anschnaller":"Sicherheitsgurt","Standstreifen":"Seitenstreifen","laptop":"Gerät, das der Kommunikation, Information oder Organisation dient oder zu dienen bestimmt ist","Blitzer":"Verkehrsüberwachungsmaßnahmen","blinker":"Fahrtrichtungsanzeiger","ampel":"Lichtzeichenanlage","thc":"Tetrahydrocannabinol","stop":"Zeichen 206","innerorts":"innerhalb geschlossener Ortschaften","Behindertenparkplatz":"Sonderparkplatz","einfädeln":"sie wechselten den Fahrstreifen","scooter":"Elektrokleinstfahrzeug"}, PFADJS = "tatbestand";
   var feld = document.getElementById("q"), liste = document.getElementById("liste");
   var bereich = "";
 
@@ -70,7 +70,7 @@
     }
     liste.innerHTML = '<h1>' + treffer.length + ' Treffer</h1>'
       + treffer.slice(0, 200).map(function (e) {
-          return '<a class="treffer" href="../t/' + e.n + '/"><span class="nr">' + e.n
+          return '<a class="treffer" href="../' + PFADJS + '/' + e.n + '/"><span class="nr">' + e.n
             + '</span><div class="text">' + e.t + '</div>' + marken(e) + '</a>';
         }).join("");
   }

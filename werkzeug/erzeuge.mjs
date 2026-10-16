@@ -33,6 +33,10 @@ const BASIS = process.env.BASIS || "https://developeryp.github.io/TBNR";
 
 const BLAU = "#32ADE6";
 
+/** Pfadstueck vor der Nummer. Ausgeschrieben, weil Google das Stichwort in
+ *  der Adresse mitliest — "/tatbestand/112665/" schlaegt "/t/112665/". */
+const PFAD = "tatbestand";
+
 /** Rechtsgrundlage aus der ersten Ziffer — wie FilterKategorie.vonTbnr. */
 const BEREICHE = [
   { kennung: "stvo", titel: "StVO", ziffer: "1" },
@@ -228,7 +232,7 @@ function tatbestandSeite(e, verwandte) {
       `${e.bussgeld ? e.bussgeld + " Euro" : "kein Bußgeld"}` +
       `${e.punkte && e.punkte !== "0"
           ? ", " + e.punkte + (e.punkte === "1" ? " Punkt" : " Punkte") : ""}.`,
-    pfad: `/t/${e.nummer}/`,
+    pfad: `/${PFAD}/${e.nummer}/`,
     hoch,
     inhalt: `
       <form action="${hoch}katalog/" method="get">
@@ -262,7 +266,7 @@ function sucheSeite(synonyme) {
   const skript = `
 <script>
 (function () {
-  var daten = [], synonyme = ${JSON.stringify(synonyme)};
+  var daten = [], synonyme = ${JSON.stringify(synonyme)}, PFADJS = ${JSON.stringify(PFAD)};
   var feld = document.getElementById("q"), liste = document.getElementById("liste");
   var bereich = "";
 
@@ -301,7 +305,7 @@ function sucheSeite(synonyme) {
     }
     liste.innerHTML = '<h1>' + treffer.length + ' Treffer</h1>'
       + treffer.slice(0, 200).map(function (e) {
-          return '<a class="treffer" href="../t/' + e.n + '/"><span class="nr">' + e.n
+          return '<a class="treffer" href="../' + PFADJS + '/' + e.n + '/"><span class="nr">' + e.n
             + '</span><div class="text">' + e.t + '</div>' + marken(e) + '</a>';
         }).join("");
   }
@@ -348,7 +352,7 @@ function sucheSeite(synonyme) {
       ${leiste}
       <div id="liste"></div>
       <noscript><p class="hinweis">Für die Suche wird JavaScript benötigt. Einzelne
-        Tatbestände sind auch ohne erreichbar, etwa unter <code>/t/112665/</code>.</p></noscript>`,
+        Tatbestände sind auch ohne erreichbar, etwa unter <code>/${PFAD}/112665/</code>.</p></noscript>`,
   });
 }
 
@@ -364,12 +368,14 @@ const daten = zeilen.map(zerlege).filter((e) => e && e.nummer && e.text);
 console.log(`  ${daten.length} Tatbestände, ${synonyme.length} Synonyme`);
 
 // Alte Seiten weg, damit entfernte Tatbestaende nicht stehenbleiben.
-if (existsSync(wurzel + "t")) await rm(wurzel + "t", { recursive: true });
+for (const alt of ["t", PFAD]) {
+  if (existsSync(wurzel + alt)) await rm(wurzel + alt, { recursive: true });
+}
 await mkdir(wurzel + "katalog", { recursive: true });
 
 for (const e of daten) {
-  await mkdir(`${wurzel}t/${e.nummer}`, { recursive: true });
-  await writeFile(`${wurzel}t/${e.nummer}/index.html`, tatbestandSeite(e, stufen(daten, e)));
+  await mkdir(`${wurzel}${PFAD}/${e.nummer}`, { recursive: true });
+  await writeFile(`${wurzel}${PFAD}/${e.nummer}/index.html`, tatbestandSeite(e, stufen(daten, e)));
 }
 console.log(`  ${daten.length} Seiten geschrieben`);
 
@@ -387,7 +393,7 @@ await writeFile(wurzel + "stil.css", STIL);
 await writeFile(wurzel + "sitemap.xml",
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`
   + `<url><loc>${BASIS}/katalog/</loc></url>`
-  + daten.map((e) => `<url><loc>${BASIS}/t/${e.nummer}/</loc></url>`).join("")
+  + daten.map((e) => `<url><loc>${BASIS}/${PFAD}/${e.nummer}/</loc></url>`).join("")
   + `</urlset>\n`);
 
 // Der Katalog soll gefunden werden. Die rechtlichen Seiten tragen ihr eigenes
