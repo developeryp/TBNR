@@ -21,6 +21,7 @@
 import { mkdir, writeFile, rm, readFile, readdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
 
 const PROJEKT = "tatbestandskatalog-60d4c";
 const DOKUMENT =
@@ -39,6 +40,7 @@ const BASIS = process.env.BASIS || "https://tbnr.app";
 const wurzelPfad = fileURLToPath(new URL("..", import.meta.url));
 
 const BLAU = "#32ADE6";
+
 
 /** Pfadstueck vor der Nummer. Ausgeschrieben, weil Google das Stichwort in
  *  der Adresse mitliest — "/tatbestand/112665/" schlaegt "/t/112665/". */
@@ -201,11 +203,18 @@ const STIL = `
   .zeichenkachel:hover { outline:2px solid var(--blau); }
   .zeichenkachel img { width:62px; height:62px; object-fit:contain; }
   .zeichenkachel .bez { font-size:12px; color:var(--gedaempft); line-height:1.3; }
-  .einstiege { display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
-    margin-top:16px; }
-  .einstiege a { background:rgba(255,255,255,.2); color:#fff; text-decoration:none;
-    padding:9px 18px; border-radius:22px; font-weight:600; font-size:15px; }
-  .einstiege a:hover { background:rgba(255,255,255,.32); }
+  .einstiege { display:grid; gap:12px; margin:26px auto 0; max-width:620px;
+    grid-template-columns:repeat(auto-fit,minmax(248px,1fr)); }
+  .einstiege a { display:flex; align-items:center; gap:13px; text-align:left;
+    background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.28);
+    color:#fff; text-decoration:none; padding:14px 16px; border-radius:16px;
+    transition:transform .12s, background .12s; }
+  .einstiege a:hover { background:rgba(255,255,255,.26); transform:translateY(-2px); }
+  .einstiege img { width:46px; height:46px; border-radius:11px; flex:0 0 auto;
+    object-fit:contain; background:#fff; }
+  .einstiege span { display:flex; flex-direction:column; font-size:13px;
+    line-height:1.35; opacity:.9; }
+  .einstiege b { font-size:17px; opacity:1; margin-bottom:1px; }
   /* Startseite */
   .buehne { background:linear-gradient(160deg,#32ADE6,#2563eb); color:#fff;
     padding:52px 20px 44px; text-align:center; }
@@ -230,6 +239,14 @@ const STIL = `
   footer a { color:var(--blau); }
 `;
 
+/** Haengt an der Stylesheet-Adresse. Browser halten CSS zehn Minuten lang
+ *  fest; ohne diese Kennung sieht man eine Aenderung erst danach.
+ *
+ *  Abgeleitet aus dem Inhalt, nicht aus der Uhrzeit: Sonst bekaeme jede
+ *  Seite bei jedem Lauf eine neue Adresse, und die taegliche Action wuerde
+ *  alle 3836 Dateien einchecken, obwohl sich nichts geaendert hat. */
+const STILVERSION = createHash("sha1").update(STIL).digest("hex").slice(0, 8);
+
 function geruest({ titel, beschreibung, inhalt, pfad, hoch, skript = "", banner = "" }) {
   return `<!doctype html>
 <html lang="de">
@@ -243,7 +260,7 @@ function geruest({ titel, beschreibung, inhalt, pfad, hoch, skript = "", banner 
 <link rel="icon" href="${hoch}bilder/icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="${hoch}bilder/icon-180.png">
 <meta name="theme-color" content="${BLAU}">
-<link rel="stylesheet" href="${hoch}stil.css">${banner}
+<link rel="stylesheet" href="${hoch}stil.css?v=${STILVERSION}">${banner}
 </head>
 <body>
 <header>
@@ -666,7 +683,7 @@ const startseite = `<!doctype html>
 <link rel="icon" href="bilder/icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="bilder/icon-180.png">
 <meta name="theme-color" content="${BLAU}">
-<link rel="stylesheet" href="stil.css">
+<link rel="stylesheet" href="stil.css?v=${STILVERSION}">
 </head>
 <body>
 
@@ -680,10 +697,16 @@ const startseite = `<!doctype html>
   </form>
   <!-- Die Zeichensuche steht gleichberechtigt neben der Tatbestandssuche,
        nicht erst weiter unten — sie ist der zweite Grund herzukommen. -->
-  <p class="einstiege">
-    <a href="katalog/">${daten.length} Tatbestände</a>
-    <a href="${PFAD_VZ}/">${zeichen.length} Verkehrszeichen</a>
-  </p>
+  <div class="einstiege">
+    <a href="katalog/">
+      <img src="bilder/icon-192.png" alt="">
+      <span><b>Tatbestände</b>${daten.length} Einträge mit Bußgeld und Punkten</span>
+    </a>
+    <a href="${PFAD_VZ}/">
+      <img src="bilder/vz/206.png" alt="">
+      <span><b>Verkehrszeichen</b>${zeichen.length} Zeichen mit passenden Tatbeständen</span>
+    </a>
+  </div>
 </div>
 
 <main>
