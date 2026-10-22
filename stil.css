@@ -108,3 +108,60 @@
   footer { max-width:760px; margin:0 auto; padding:0 16px 40px;
     color:var(--gedaempft); font-size:13px; }
   footer a { color:var(--blau); }
+
+  /* ---- Startanimation ------------------------------------------------
+     Der Vorhang traegt denselben Verlauf wie die Buehne. Wenn er am Ende
+     wegzoomt, sieht es nicht aus, als wuerde etwas weggeblendet, sondern
+     als waere der Vorhang die Buehne geworden. Deshalb beginnt die Buehne
+     darunter schon aufzuziehen, waehrend der Vorhang noch verschwindet. */
+  .vorhang { position:fixed; inset:0; z-index:50; display:grid;
+    place-items:center; background:linear-gradient(160deg,#32ADE6,#2563eb);
+    animation:vorhang-weg .5s cubic-bezier(.6,0,.3,1) .95s forwards; }
+  .vorhang-inhalt { display:grid; justify-items:center; gap:15px;
+    animation:vorhang-zoom .5s cubic-bezier(.6,0,.3,1) .95s forwards; }
+  .vorhang img { width:92px; height:92px; border-radius:21px;
+    box-shadow:0 18px 48px rgba(0,0,0,.32);
+    animation:symbol-auf .62s cubic-bezier(.22,1.4,.36,1) .04s both; }
+  .vorhang b { color:#fff; font-weight:800; font-size:clamp(21px,6vw,29px);
+    animation:wort-auf .6s cubic-bezier(.22,1,.36,1) .28s both; }
+  @keyframes symbol-auf {
+    from { opacity:0; transform:scale(.3) }
+    to   { opacity:1; transform:none } }
+  @keyframes wort-auf {
+    from { opacity:0; transform:translateY(12px); filter:blur(7px); letter-spacing:.32em }
+    to   { opacity:1; transform:none;             filter:blur(0);   letter-spacing:-.5px } }
+  @keyframes vorhang-weg  { to { opacity:0; visibility:hidden } }
+  @keyframes vorhang-zoom { to { opacity:0; transform:scale(1.85) } }
+
+  /* Lichtschein, der einmal ueber die Buehne laeuft und dann schwach
+     stehen bleibt. Liegt hinter dem Inhalt, nicht darueber. */
+  .buehne { position:relative; overflow:hidden; }
+  .buehne > * { position:relative; z-index:1; }
+  .buehne::after { content:""; position:absolute; inset:-45% -10% auto 0;
+    height:175%; pointer-events:none; animation:schein 1.5s ease-out .95s both;
+    background:radial-gradient(58% 50% at 50% 0%, rgba(255,255,255,.4), transparent 70%); }
+  @keyframes schein {
+    0%   { opacity:0; transform:translateY(-32%) scale(.72) }
+    45%  { opacity:1 }
+    100% { opacity:.32; transform:none } }
+
+  /* Die Buehnenteile steigen nacheinander auf. Die Verzoegerung steht am
+     Element selbst, damit die Reihenfolge dort ablesbar ist, wo sie gilt. */
+  .auf { animation:auf .6s cubic-bezier(.22,1,.36,1) both; }
+  @keyframes auf {
+    from { opacity:0; transform:translateY(18px) }
+    to   { opacity:1; transform:none } }
+
+  /* Erst beim Hochscrollen sichtbar. Die Klasse setzt JavaScript — ohne
+     JavaScript steht alles sofort da, statt unsichtbar zu bleiben. */
+  .zeigen { opacity:0; transform:translateY(24px);
+    transition:opacity .55s ease, transform .55s cubic-bezier(.22,1,.36,1); }
+  .zeigen.da { opacity:1; transform:none; }
+
+  /* Wer Bewegung abbestellt hat, bekommt die Seite ohne jede Animation. */
+  @media (prefers-reduced-motion: reduce) {
+    .vorhang { display:none; }
+    .vorhang-inhalt, .vorhang img, .vorhang b, .buehne::after, .auf
+      { animation:none; }
+    .zeigen { opacity:1; transform:none; transition:none; }
+  }

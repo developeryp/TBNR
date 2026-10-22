@@ -256,6 +256,63 @@ const STIL = `
   footer { max-width:760px; margin:0 auto; padding:0 16px 40px;
     color:var(--gedaempft); font-size:13px; }
   footer a { color:var(--blau); }
+
+  /* ---- Startanimation ------------------------------------------------
+     Der Vorhang traegt denselben Verlauf wie die Buehne. Wenn er am Ende
+     wegzoomt, sieht es nicht aus, als wuerde etwas weggeblendet, sondern
+     als waere der Vorhang die Buehne geworden. Deshalb beginnt die Buehne
+     darunter schon aufzuziehen, waehrend der Vorhang noch verschwindet. */
+  .vorhang { position:fixed; inset:0; z-index:50; display:grid;
+    place-items:center; background:linear-gradient(160deg,#32ADE6,#2563eb);
+    animation:vorhang-weg .5s cubic-bezier(.6,0,.3,1) .95s forwards; }
+  .vorhang-inhalt { display:grid; justify-items:center; gap:15px;
+    animation:vorhang-zoom .5s cubic-bezier(.6,0,.3,1) .95s forwards; }
+  .vorhang img { width:92px; height:92px; border-radius:21px;
+    box-shadow:0 18px 48px rgba(0,0,0,.32);
+    animation:symbol-auf .62s cubic-bezier(.22,1.4,.36,1) .04s both; }
+  .vorhang b { color:#fff; font-weight:800; font-size:clamp(21px,6vw,29px);
+    animation:wort-auf .6s cubic-bezier(.22,1,.36,1) .28s both; }
+  @keyframes symbol-auf {
+    from { opacity:0; transform:scale(.3) }
+    to   { opacity:1; transform:none } }
+  @keyframes wort-auf {
+    from { opacity:0; transform:translateY(12px); filter:blur(7px); letter-spacing:.32em }
+    to   { opacity:1; transform:none;             filter:blur(0);   letter-spacing:-.5px } }
+  @keyframes vorhang-weg  { to { opacity:0; visibility:hidden } }
+  @keyframes vorhang-zoom { to { opacity:0; transform:scale(1.85) } }
+
+  /* Lichtschein, der einmal ueber die Buehne laeuft und dann schwach
+     stehen bleibt. Liegt hinter dem Inhalt, nicht darueber. */
+  .buehne { position:relative; overflow:hidden; }
+  .buehne > * { position:relative; z-index:1; }
+  .buehne::after { content:""; position:absolute; inset:-45% -10% auto 0;
+    height:175%; pointer-events:none; animation:schein 1.5s ease-out .95s both;
+    background:radial-gradient(58% 50% at 50% 0%, rgba(255,255,255,.4), transparent 70%); }
+  @keyframes schein {
+    0%   { opacity:0; transform:translateY(-32%) scale(.72) }
+    45%  { opacity:1 }
+    100% { opacity:.32; transform:none } }
+
+  /* Die Buehnenteile steigen nacheinander auf. Die Verzoegerung steht am
+     Element selbst, damit die Reihenfolge dort ablesbar ist, wo sie gilt. */
+  .auf { animation:auf .6s cubic-bezier(.22,1,.36,1) both; }
+  @keyframes auf {
+    from { opacity:0; transform:translateY(18px) }
+    to   { opacity:1; transform:none } }
+
+  /* Erst beim Hochscrollen sichtbar. Die Klasse setzt JavaScript — ohne
+     JavaScript steht alles sofort da, statt unsichtbar zu bleiben. */
+  .zeigen { opacity:0; transform:translateY(24px);
+    transition:opacity .55s ease, transform .55s cubic-bezier(.22,1,.36,1); }
+  .zeigen.da { opacity:1; transform:none; }
+
+  /* Wer Bewegung abbestellt hat, bekommt die Seite ohne jede Animation. */
+  @media (prefers-reduced-motion: reduce) {
+    .vorhang { display:none; }
+    .vorhang-inhalt, .vorhang img, .vorhang b, .buehne::after, .auf
+      { animation:none; }
+    .zeigen { opacity:1; transform:none; transition:none; }
+  }
 `;
 
 /** Haengt an der Stylesheet-Adresse. Browser halten CSS zehn Minuten lang
@@ -741,17 +798,43 @@ const startseite = `<!doctype html>
 </head>
 <body>
 
+<!-- Laeuft gut eineinhalb Sekunden und raeumt sich danach selbst weg. Der
+     Inhalt darunter steht die ganze Zeit im Dokument; der Vorhang legt sich
+     nur davor. -->
+<div class="vorhang" aria-hidden="true">
+  <div class="vorhang-inhalt">
+    <img src="bilder/icon-192.png" alt="">
+    <b>Tatbestandskatalog</b>
+  </div>
+</div>
+<script>
+// Sicherheitsnetz: Sollte die Animation nicht laufen — alte Engine, Fehler,
+// Tab im Hintergrund —, bliebe der Vorhang sonst fuer immer stehen.
+(function () {
+  var v = document.querySelector(".vorhang");
+  if (!v) return;
+  var weg = function () { if (v.parentNode) v.parentNode.removeChild(v); };
+  // Nur die eigene Abgangsanimation zaehlt. animationend steigt von den
+  // Kindern auf — das Symbol ist nach 0,66 s fertig und wuerde den Vorhang
+  // sonst abraeumen, bevor er ueberhaupt zu sehen war.
+  v.addEventListener("animationend", function (e) {
+    if (e.target === v) weg();
+  });
+  setTimeout(weg, 2500);
+})();
+</script>
+
 <div class="buehne">
-  <h1>Tatbestandskatalog</h1>
-  <p>Alle ${daten.length} Tatbestände des amtlichen Bußgeldkatalogs —
+  <h1 class="auf" style="animation-delay:.9s">Tatbestandskatalog</h1>
+  <p class="auf" style="animation-delay:1s">Alle ${daten.length} Tatbestände des amtlichen Bußgeldkatalogs —
      mit Nummer, Bußgeld, Punkten und Fahrverbot.</p>
-  <form action="katalog/" method="get">
+  <form class="auf" style="animation-delay:1.1s" action="katalog/" method="get">
     <input type="search" name="q" placeholder="Tatbestand oder Nummer suchen …">
     <button type="submit">Suchen</button>
   </form>
   <!-- Die Zeichensuche steht gleichberechtigt neben der Tatbestandssuche,
        nicht erst weiter unten — sie ist der zweite Grund herzukommen. -->
-  <div class="einstiege">
+  <div class="einstiege auf" style="animation-delay:1.2s">
     <a href="katalog/">
       <img src="bilder/icon-192.png" alt="">
       <span><b>Tatbestände</b>${daten.length} Einträge mit Bußgeld und Punkten</span>
@@ -831,6 +914,27 @@ const startseite = `<!doctype html>
   var b = document.getElementById("zeichenbeispiele");
   if (a) a.innerHTML = ziehe(tatbestaende, 4);
   if (b) b.innerHTML = ziehe(zeichen, 6);
+})();
+
+// Die Abschnitte unter der Buehne steigen auf, sobald sie in Sicht kommen.
+// Die Klasse wird hier gesetzt und nicht im HTML: Ohne JavaScript soll
+// nichts unsichtbar sein.
+(function () {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var teile = document.querySelectorAll("main > .zweispalten > section, main > h2, main > .apps");
+  if (!teile.length || !window.IntersectionObserver) return;
+  for (var i = 0; i < teile.length; i++) {
+    teile[i].classList.add("zeigen");
+    teile[i].style.transitionDelay = (i % 2) * 0.09 + "s";
+  }
+  var beobachter = new IntersectionObserver(function (eintraege) {
+    eintraege.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      e.target.classList.add("da");
+      beobachter.unobserve(e.target);
+    });
+  }, { rootMargin: "0px 0px -12% 0px" });
+  teile.forEach(function (t) { beobachter.observe(t); });
 })();
 </script>
 </body>
